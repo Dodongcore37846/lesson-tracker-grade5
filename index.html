@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson Tracker</title>
+    <title>Enhanced Lesson Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -397,6 +397,102 @@
             margin-top: 20px;
         }
         
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 5px;
+            background-color: var(--secondary);
+            transition: width 0.3s ease;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-day1 {
+            background: #ffe0b2;
+            color: #ef6c00;
+        }
+        
+        .status-day2 {
+            background: #fff9c4;
+            color: #fbc02d;
+        }
+        
+        .status-day3 {
+            background: #c8e6c9;
+            color: #388e3c;
+        }
+        
+        .status-day4 {
+            background: #bbdefb;
+            color: #1976d2;
+        }
+        
+        .status-day5 {
+            background: #e1bee7;
+            color: #7b1fa2;
+        }
+        
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-test {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .completed-lessons {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border);
+        }
+        
+        .completed-lessons h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        .subject-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .subject-tab {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .subject-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .subject-content {
+            display: none;
+        }
+        
+        .subject-content.active {
+            display: block;
+        }
+        
         /* Print styles */
         @media print {
             body {
@@ -528,23 +624,6 @@
             margin-bottom: 15px;
             opacity: 0.5;
         }
-        
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .status-completed {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        
-        .status-pending {
-            background: #ffecb3;
-            color: #f57c00;
-        }
     </style>
 </head>
 <body>
@@ -556,8 +635,8 @@
             <div class="logo">
                 <i class="fas fa-book-open"></i>
                 <div>
-                    <h1>Lesson Tracker</h1>
-                    <p class="subtitle">All data stored locally in your browser - no internet needed</p>
+                    <h1>Enhanced Lesson Tracker</h1>
+                    <p class="subtitle">Track lesson progress with automated completion</p>
                 </div>
             </div>
             <div class="storage-info">
@@ -605,21 +684,14 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="day">Day</label>
-                        <select class="form-control" id="day" required>
-                            <option value="">Select a day</option>
-                            <option value="1">Day 1</option>
-                            <option value="2">Day 2</option>
-                            <option value="3">Day 3</option>
-                            <option value="4">Day 4</option>
-                            <option value="5">Day 5</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
                         <label for="status">Status</label>
                         <select class="form-control" id="status" required>
-                            <option value="pending">Pending</option>
+                            <option value="day1">Day 1</option>
+                            <option value="day2">Day 2</option>
+                            <option value="day3">Day 3</option>
+                            <option value="day4">Day 4</option>
+                            <option value="day5">Day 5</option>
+                            <option value="test">Weekly Test</option>
                             <option value="completed">Completed</option>
                         </select>
                     </div>
@@ -695,8 +767,12 @@
                     <label for="filter-status">Status:</label>
                     <select id="filter-status">
                         <option value="all">All Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="completed">Completed</option>
+                        <option value="day1">Day 1</option>
+                        <option value="day2">Day 2</option>
+                        <option value="day3">Day 3</option>
+                        <option value="day4">Day 4</option>
+                        <option value="day5">Day 5</option>
+                        <option value="test">Weekly Test</option>
                     </select>
                 </div>
                 
@@ -724,9 +800,9 @@
                     <tr>
                         <th>Subject</th>
                         <th>Week</th>
-                        <th>Day</th>
                         <th>Topic Name</th>
                         <th>Status</th>
+                        <th>Progress</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -734,6 +810,17 @@
                     <!-- Data will be populated here -->
                 </tbody>
             </table>
+            
+            <div class="completed-lessons">
+                <h2><i class="fas fa-check-circle"></i> Completed Lessons</h2>
+                <div class="subject-tabs" id="subject-tabs">
+                    <!-- Subject tabs will be populated here -->
+                </div>
+                
+                <div id="completed-content">
+                    <!-- Completed lessons will be organized by subject -->
+                </div>
+            </div>
             
             <div class="storage-status">
                 <h3><i class="fas fa-info-circle"></i> Local Storage Information</h3>
@@ -806,6 +893,8 @@
             const cancelActionBtn = document.getElementById('cancel-action');
             const confirmationMessage = document.getElementById('confirmation-message');
             const modalCloseBtn = document.querySelector('.modal-close');
+            const subjectTabsContainer = document.getElementById('subject-tabs');
+            const completedContentContainer = document.getElementById('completed-content');
             
             let lessons = [];
             let currentFilters = {
@@ -815,6 +904,7 @@
                 search: ''
             };
             let pendingAction = null;
+            let activeSubjectTab = 'all';
             
             // Load data from localStorage
             function loadData() {
@@ -824,6 +914,7 @@
                         lessons = JSON.parse(savedData);
                         renderTable();
                         updateStats();
+                        renderCompletedLessons();
                     } else {
                         showEmptyState();
                         updateStats();
@@ -852,8 +943,8 @@
             // Update statistics
             function updateStats() {
                 const totalLessons = lessons.length;
-                const completedLessons = lessons.filter(lesson => lesson.status === 'completed').length;
-                const pendingLessons = totalLessons - completedLessons;
+                const activeLessons = lessons.filter(lesson => lesson.status !== 'completed').length;
+                const completedLessons = totalLessons - activeLessons;
                 const completionRate = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
                 
                 statsContainer.innerHTML = `
@@ -862,12 +953,12 @@
                         <div class="stat-value">${totalLessons}</div>
                     </div>
                     <div class="stat-card secondary">
-                        <div class="stat-label">Completed</div>
-                        <div class="stat-value">${completedLessons}</div>
+                        <div class="stat-label">Active</div>
+                        <div class="stat-value">${activeLessons}</div>
                     </div>
                     <div class="stat-card warning">
-                        <div class="stat-label">Pending</div>
-                        <div class="stat-value">${pendingLessons}</div>
+                        <div class="stat-label">Completed</div>
+                        <div class="stat-value">${completedLessons}</div>
                     </div>
                     <div class="stat-card accent">
                         <div class="stat-label">Completion Rate</div>
@@ -888,6 +979,7 @@
                     }, 2000);
                     
                     updateStats();
+                    renderCompletedLessons();
                 } catch (error) {
                     console.error('Error saving data:', error);
                     showError('Failed to save data to storage. Your browser may not support localStorage or storage may be full.');
@@ -914,17 +1006,55 @@
                 }, 100);
             }
             
+            // Calculate progress percentage based on status
+            function getProgressPercentage(status) {
+                const progressMap = {
+                    'day1': 20,
+                    'day2': 40,
+                    'day3': 60,
+                    'day4': 80,
+                    'day5': 100,
+                    'test': 100,
+                    'completed': 100
+                };
+                
+                return progressMap[status] || 0;
+            }
+            
+            // Get status text for display
+            function getStatusText(status) {
+                const statusMap = {
+                    'day1': 'Day 1',
+                    'day2': 'Day 2',
+                    'day3': 'Day 3',
+                    'day4': 'Day 4',
+                    'day5': 'Day 5',
+                    'test': 'Weekly Test',
+                    'completed': 'Completed'
+                };
+                
+                return statusMap[status] || status;
+            }
+            
+            // Get status class for styling
+            function getStatusClass(status) {
+                return `status-${status}`;
+            }
+            
             // Render table with lesson data
             function renderTable() {
                 lessonData.innerHTML = '';
                 
-                if (lessons.length === 0) {
+                // Filter out completed lessons (they will be shown in the completed section)
+                const activeLessons = lessons.filter(lesson => lesson.status !== 'completed');
+                
+                if (activeLessons.length === 0) {
                     showEmptyState();
                     return;
                 }
                 
                 // Apply filters
-                let filteredLessons = lessons.filter(lesson => {
+                let filteredLessons = activeLessons.filter(lesson => {
                     if (currentFilters.subject !== 'all' && lesson.subject !== currentFilters.subject) return false;
                     if (currentFilters.week !== 'all' && lesson.week !== currentFilters.week) return false;
                     if (currentFilters.status !== 'all' && lesson.status !== currentFilters.status) return false;
@@ -958,20 +1088,22 @@
                 filteredLessons.forEach(lesson => {
                     const row = document.createElement('tr');
                     
-                    // Add completed class if lesson is completed
-                    if (lesson.status === 'completed') {
-                        row.classList.add('completed');
-                    }
+                    const progressPercentage = getProgressPercentage(lesson.status);
                     
                     row.innerHTML = `
                         <td>${subjectMap[lesson.subject]}</td>
                         <td>Week ${lesson.week}</td>
-                        <td>Day ${lesson.day}</td>
                         <td>${lesson.topic}</td>
                         <td>
-                            <span class="status-badge ${lesson.status === 'completed' ? 'status-completed' : 'status-pending'}">
-                                ${lesson.status === 'completed' ? 'Completed' : 'Pending'}
+                            <span class="status-badge ${getStatusClass(lesson.status)}">
+                                ${getStatusText(lesson.status)}
                             </span>
+                        </td>
+                        <td>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: ${progressPercentage}%"></div>
+                            </div>
+                            <small>${progressPercentage}% complete</small>
                         </td>
                         <td>
                             <div class="action-buttons">
@@ -1006,6 +1138,146 @@
                 });
             }
             
+            // Render completed lessons organized by subject
+            function renderCompletedLessons() {
+                // Clear previous content
+                subjectTabsContainer.innerHTML = '';
+                completedContentContainer.innerHTML = '';
+                
+                // Get all completed lessons
+                const completedLessons = lessons.filter(lesson => lesson.status === 'completed');
+                
+                if (completedLessons.length === 0) {
+                    completedContentContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>No completed lessons yet</h3>
+                            <p>Complete some lessons to see them here.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Get unique subjects from completed lessons
+                const subjects = [...new Set(completedLessons.map(lesson => lesson.subject))];
+                
+                // Create subject tabs
+                subjectTabsContainer.innerHTML = '<div class="subject-tab active" data-subject="all">All Subjects</div>';
+                subjects.forEach(subject => {
+                    const subjectName = getSubjectName(subject);
+                    subjectTabsContainer.innerHTML += `<div class="subject-tab" data-subject="${subject}">${subjectName}</div>`;
+                });
+                
+                // Add event listeners to subject tabs
+                document.querySelectorAll('.subject-tab').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        // Update active tab
+                        document.querySelectorAll('.subject-tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Filter completed lessons by subject
+                        const subject = this.getAttribute('data-subject');
+                        renderCompletedLessonsBySubject(subject);
+                    });
+                });
+                
+                // Render all completed lessons by default
+                renderCompletedLessonsBySubject('all');
+            }
+            
+            // Render completed lessons for a specific subject
+            function renderCompletedLessonsBySubject(subject) {
+                // Clear previous content
+                completedContentContainer.innerHTML = '';
+                
+                // Filter completed lessons by subject
+                let filteredLessons = lessons.filter(lesson => lesson.status === 'completed');
+                if (subject !== 'all') {
+                    filteredLessons = filteredLessons.filter(lesson => lesson.subject === subject);
+                }
+                
+                if (filteredLessons.length === 0) {
+                    completedContentContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>No completed lessons${subject !== 'all' ? ' for this subject' : ''}</h3>
+                            <p>Complete some lessons to see them here.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Group by subject if showing all subjects
+                if (subject === 'all') {
+                    const subjects = [...new Set(filteredLessons.map(lesson => lesson.subject))];
+                    
+                    subjects.forEach(subject => {
+                        const subjectLessons = filteredLessons.filter(lesson => lesson.subject === subject);
+                        const subjectName = getSubjectName(subject);
+                        
+                        completedContentContainer.innerHTML += `
+                            <h3>${subjectName}</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Week</th>
+                                        <th>Topic Name</th>
+                                        <th>Completed Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${subjectLessons.map(lesson => `
+                                        <tr>
+                                            <td>Week ${lesson.week}</td>
+                                            <td>${lesson.topic}</td>
+                                            <td>${lesson.completedDate ? new Date(lesson.completedDate).toLocaleDateString() : 'N/A'}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                    });
+                } else {
+                    // Show lessons for the selected subject
+                    completedContentContainer.innerHTML = `
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Week</th>
+                                    <th>Topic Name</th>
+                                    <th>Completed Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${filteredLessons.map(lesson => `
+                                    <tr>
+                                        <td>Week ${lesson.week}</td>
+                                        <td>${lesson.topic}</td>
+                                        <td>${lesson.completedDate ? new Date(lesson.completedDate).toLocaleDateString() : 'N/A'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            }
+            
+            // Get subject name for display
+            function getSubjectName(subjectCode) {
+                const subjectMap = {
+                    'english': 'English',
+                    'math': 'Math',
+                    'science': 'Science',
+                    'filipino': 'Filipino',
+                    'ap': 'Araling Panlipunan',
+                    'epp': 'EPP',
+                    'gmrc': 'GMRC',
+                    'mapeh': 'MAPEH'
+                };
+                
+                return subjectMap[subjectCode] || subjectCode;
+            }
+            
             // Edit a lesson
             function editLesson(id) {
                 const lesson = lessons.find(l => l.id === id);
@@ -1014,9 +1286,8 @@
                 // Populate form with lesson data
                 document.getElementById('subject').value = lesson.subject;
                 document.getElementById('week').value = lesson.week;
-                document.getElementById('day').value = lesson.day;
-                document.getElementById('topic').value = lesson.topic;
                 document.getElementById('status').value = lesson.status;
+                document.getElementById('topic').value = lesson.topic;
                 document.getElementById('notes').value = lesson.notes || '';
                 
                 // Set edit mode
@@ -1056,53 +1327,55 @@
                 
                 const subject = document.getElementById('subject').value;
                 const week = document.getElementById('week').value;
-                const day = document.getElementById('day').value;
-                const topic = document.getElementById('topic').value;
                 const status = document.getElementById('status').value;
+                const topic = document.getElementById('topic').value;
                 const notes = document.getElementById('notes').value;
                 const editId = editIdField.value;
                 
-                // Validate for duplicates when adding new lesson
-                if (!editId) {
-                    const isDuplicate = lessons.some(lesson => 
-                        lesson.subject === subject && 
-                        lesson.week === week && 
-                        lesson.day === day && 
-                        lesson.topic === topic
-                    );
-                    
-                    if (isDuplicate) {
-                        showError('This lesson already exists!');
-                        return;
-                    }
+                // Validate required fields
+                if (!subject || !week || !status || !topic) {
+                    showError('Please fill in all required fields');
+                    return;
                 }
                 
                 if (editId) {
                     // Update existing lesson
                     const index = lessons.findIndex(lesson => lesson.id === editId);
                     if (index !== -1) {
-                        lessons[index] = {
+                        const updatedLesson = {
                             ...lessons[index],
                             subject,
                             week,
-                            day,
-                            topic,
                             status,
+                            topic,
                             notes
                         };
+                        
+                        // Set completed date if status is changed to completed
+                        if (status === 'completed' && lessons[index].status !== 'completed') {
+                            updatedLesson.completedDate = new Date().toISOString();
+                        }
+                        
+                        lessons[index] = updatedLesson;
                     }
                 } else {
                     // Add new lesson
-                    lessons.push({
+                    const newLesson = {
                         id: Date.now().toString(), // Unique ID
                         subject,
                         week,
-                        day,
-                        topic,
                         status,
+                        topic,
                         notes,
                         createdAt: new Date().toISOString()
-                    });
+                    };
+                    
+                    // Set completed date if status is completed
+                    if (status === 'completed') {
+                        newLesson.completedDate = new Date().toISOString();
+                    }
+                    
+                    lessons.push(newLesson);
                 }
                 
                 // Save and render
@@ -1130,9 +1403,9 @@
                 doc.setTextColor(100);
                 
                 // Add filters info if any are applied
-                let filtersText = 'All Lessons';
+                let filtersText = 'Active Lessons';
                 if (currentFilters.subject !== 'all' || currentFilters.week !== 'all' || currentFilters.status !== 'all' || currentFilters.search) {
-                    filtersText = 'Filtered Lessons';
+                    filtersText = 'Filtered Active Lessons';
                     
                     if (currentFilters.subject !== 'all') {
                         filtersText += ` | Subject: ${document.getElementById('filter-subject').options[document.getElementById('filter-subject').selectedIndex].text}`;
@@ -1150,8 +1423,9 @@
                 
                 doc.text(filtersText, 14, 22);
                 
-                // Get filtered data for PDF
-                let filteredLessons = lessons.filter(lesson => {
+                // Get filtered data for PDF (active lessons only)
+                const activeLessons = lessons.filter(lesson => lesson.status !== 'completed');
+                let filteredLessons = activeLessons.filter(lesson => {
                     if (currentFilters.subject !== 'all' && lesson.subject !== currentFilters.subject) return false;
                     if (currentFilters.week !== 'all' && lesson.week !== currentFilters.week) return false;
                     if (currentFilters.status !== 'all' && lesson.status !== currentFilters.status) return false;
@@ -1160,7 +1434,7 @@
                 });
                 
                 // Format data for PDF table
-                const tableColumn = ["Subject", "Week", "Day", "Topic", "Status"];
+                const tableColumn = ["Subject", "Week", "Topic", "Status", "Progress"];
                 const tableRows = [];
                 
                 // Format subject names for PDF
@@ -1176,12 +1450,13 @@
                 };
                 
                 filteredLessons.forEach(lesson => {
+                    const progressPercentage = getProgressPercentage(lesson.status);
                     const lessonData = [
                         subjectMap[lesson.subject],
                         `Week ${lesson.week}`,
-                        `Day ${lesson.day}`,
                         lesson.topic,
-                        lesson.status === 'completed' ? 'Completed' : 'Pending'
+                        getStatusText(lesson.status),
+                        `${progressPercentage}%`
                     ];
                     tableRows.push(lessonData);
                 });
@@ -1205,6 +1480,48 @@
                         fillColor: [240, 240, 240]
                     }
                 });
+                
+                // Add completed lessons if any
+                const completedLessons = lessons.filter(lesson => lesson.status === 'completed');
+                if (completedLessons.length > 0) {
+                    doc.addPage();
+                    doc.setFontSize(16);
+                    doc.text('Completed Lessons', 14, 15);
+                    doc.setFontSize(12);
+                    doc.setTextColor(100);
+                    
+                    const completedTableColumn = ["Subject", "Week", "Topic", "Completed Date"];
+                    const completedTableRows = [];
+                    
+                    completedLessons.forEach(lesson => {
+                        const lessonData = [
+                            subjectMap[lesson.subject],
+                            `Week ${lesson.week}`,
+                            lesson.topic,
+                            lesson.completedDate ? new Date(lesson.completedDate).toLocaleDateString() : 'N/A'
+                        ];
+                        completedTableRows.push(lessonData);
+                    });
+                    
+                    doc.autoTable({
+                        head: [completedTableColumn],
+                        body: completedTableRows,
+                        startY: 25,
+                        theme: 'grid',
+                        styles: {
+                            fontSize: 10,
+                            cellPadding: 3,
+                        },
+                        headStyles: {
+                            fillColor: [46, 204, 113],
+                            textColor: 255,
+                            fontStyle: 'bold'
+                        },
+                        alternateRowStyles: {
+                            fillColor: [240, 240, 240]
+                        }
+                    });
+                }
                 
                 // Save the PDF
                 const date = new Date();
@@ -1286,7 +1603,7 @@
                             item && 
                             typeof item.subject === 'string' && 
                             typeof item.week === 'string' && 
-                            typeof item.day === 'string' && 
+                            typeof item.status === 'string' && 
                             typeof item.topic === 'string'
                         );
                         
