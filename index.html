@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offline Lesson Tracker</title>
+    <title>Lesson Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -12,6 +12,7 @@
             --primary: #3498db;
             --secondary: #2ecc71;
             --accent: #e74c3c;
+            --warning: #f39c12;
             --light: #f8f9fa;
             --dark: #2c3e50;
             --gray: #7f8c8d;
@@ -109,6 +110,45 @@
             padding: 25px;
         }
         
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .stat-card.warning {
+            border-left-color: var(--warning);
+        }
+        
+        .stat-card.accent {
+            border-left-color: var(--accent);
+        }
+        
+        .stat-card.secondary {
+            border-left-color: var(--secondary);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -178,8 +218,16 @@
             background: var(--accent);
         }
         
+        .btn-warning {
+            background: var(--warning);
+        }
+        
         .btn-pdf {
             background: #e74c3c;
+        }
+        
+        .btn-json {
+            background: #9b59b6;
         }
         
         .form-actions {
@@ -217,6 +265,30 @@
         
         .data-table tr:hover {
             background-color: #f5f7fa;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .edit-btn {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .delete-btn {
+            background: var(--accent);
+            color: white;
         }
         
         .footer {
@@ -258,9 +330,10 @@
             gap: 15px;
             margin-bottom: 20px;
             flex-wrap: wrap;
+            align-items: center;
         }
         
-        .filter-controls select {
+        .filter-controls select, .filter-controls input {
             padding: 10px 15px;
             border: 1px solid var(--border);
             border-radius: 6px;
@@ -273,6 +346,55 @@
             border-radius: 8px;
             margin-top: 20px;
             border-left: 4px solid var(--primary);
+        }
+        
+        .import-export {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #9b59b6;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .confirmation-modal .btn {
+            margin-top: 20px;
         }
         
         /* Print styles */
@@ -294,21 +416,13 @@
                 border-bottom: 2px solid var(--primary);
             }
             
-            .offline-badge {
-                display: none;
-            }
-            
-            .logo i {
-                background: var(--primary) !important;
-                color: white !important;
+            .offline-badge, .stats-grid, .form-grid, .form-actions, .footer, 
+            .filter-controls, .storage-status, .import-export, .action-buttons {
+                display: none !important;
             }
             
             .content-area {
                 padding: 15px;
-            }
-            
-            .form-grid, .form-actions, .footer, .filter-controls, .storage-status {
-                display: none;
             }
             
             .data-table {
@@ -345,8 +459,13 @@
                 grid-template-columns: 1fr;
             }
             
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
             .form-actions, .filter-controls {
                 flex-direction: column;
+                align-items: stretch;
             }
             
             .btn {
@@ -366,6 +485,65 @@
                 margin: 10px auto;
                 width: fit-content;
             }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                padding: 15px;
+            }
+            
+            .logo {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo i {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-pending {
+            background: #ffecb3;
+            color: #f57c00;
         }
     </style>
 </head>
@@ -378,7 +556,7 @@
             <div class="logo">
                 <i class="fas fa-book-open"></i>
                 <div>
-                    <h1>Offline Lesson Tracker</h1>
+                    <h1>Lesson Tracker</h1>
                     <p class="subtitle">All data stored locally in your browser - no internet needed</p>
                 </div>
             </div>
@@ -388,7 +566,13 @@
         </header>
         
         <div class="content-area">
+            <div class="stats-grid" id="stats-container">
+                <!-- Stats will be populated by JavaScript -->
+            </div>
+            
             <form id="lesson-form">
+                <input type="hidden" id="edit-id" value="">
+                
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="subject">Subject</label>
@@ -431,6 +615,14 @@
                             <option value="5">Day 5</option>
                         </select>
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select class="form-control" id="status" required>
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -438,15 +630,29 @@
                     <input type="text" class="form-control" id="topic" placeholder="Enter topic name" required>
                 </div>
                 
+                <div class="form-group">
+                    <label for="notes">Notes (Optional)</label>
+                    <textarea class="form-control" id="notes" placeholder="Add any additional notes" rows="3"></textarea>
+                </div>
+                
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" id="submit-btn">
                         <i class="fas fa-plus"></i> Add Lesson
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="cancel-edit-btn" style="display: none;">
+                        <i class="fas fa-times"></i> Cancel Edit
                     </button>
                     <button type="button" class="btn btn-secondary" id="print-btn">
                         <i class="fas fa-print"></i> Print Table
                     </button>
                     <button type="button" class="btn btn-pdf" id="pdf-btn">
                         <i class="fas fa-file-pdf"></i> Export as PDF
+                    </button>
+                    <button type="button" class="btn btn-json" id="export-json-btn">
+                        <i class="fas fa-file-export"></i> Export JSON
+                    </button>
+                    <button type="button" class="btn btn-warning" id="import-json-btn">
+                        <i class="fas fa-file-import"></i> Import JSON
                     </button>
                     <button type="button" class="btn btn-accent" id="reset-btn">
                         <i class="fas fa-trash"></i> Clear All
@@ -455,24 +661,56 @@
             </form>
             
             <div class="filter-controls">
-                <select id="filter-subject">
-                    <option value="all">All Subjects</option>
-                    <option value="english">English</option>
-                    <option value="math">Math</option>
-                    <option value="science">Science</option>
-                    <option value="filipino">Filipino</option>
-                </select>
+                <div>
+                    <label for="filter-subject">Subject:</label>
+                    <select id="filter-subject">
+                        <option value="all">All Subjects</option>
+                        <option value="english">English</option>
+                        <option value="math">Math</option>
+                        <option value="science">Science</option>
+                        <option value="filipino">Filipino</option>
+                        <option value="ap">Araling Panlipunan</option>
+                        <option value="epp">EPP</option>
+                        <option value="gmrc">GMRC</option>
+                        <option value="mapeh">MAPEH</option>
+                    </select>
+                </div>
                 
-                <select id="filter-week">
-                    <option value="all">All Weeks</option>
-                    <option value="1">Week 1</option>
-                    <option value="2">Week 2</option>
-                    <option value="3">Week 3</option>
-                    <option value="4">Week 4</option>
-                </select>
+                <div>
+                    <label for="filter-week">Week:</label>
+                    <select id="filter-week">
+                        <option value="all">All Weeks</option>
+                        <option value="1">Week 1</option>
+                        <option value="2">Week 2</option>
+                        <option value="3">Week 3</option>
+                        <option value="4">Week 4</option>
+                        <option value="5">Week 5</option>
+                        <option value="6">Week 6</option>
+                        <option value="7">Week 7</option>
+                        <option value="8">Week 8</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="filter-status">Status:</label>
+                    <select id="filter-status">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="search">Search:</label>
+                    <input type="text" id="search" placeholder="Search topics...">
+                </div>
                 
                 <button class="btn btn-primary" id="apply-filters">
                     <i class="fas fa-filter"></i> Apply Filters
+                </button>
+                
+                <button class="btn btn-secondary" id="clear-filters">
+                    <i class="fas fa-times"></i> Clear Filters
                 </button>
             </div>
             
@@ -488,6 +726,7 @@
                         <th>Week</th>
                         <th>Day</th>
                         <th>Topic Name</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -506,14 +745,35 @@
                     <li>To transfer data to another device, use the Export/Import features</li>
                 </ul>
             </div>
+            
+            <div class="import-export">
+                <h3><i class="fas fa-file-import"></i> Import/Export Data</h3>
+                <p>You can export your data as a JSON file to backup or transfer to another device. You can also import previously exported data.</p>
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+            </div>
         </div>
         
         <div class="footer">
-            <p>Offline Lesson Tracker &copy; 2023 | All data stored locally in your browser - no internet required</p>
+            <p>Enhanced Lesson Tracker &copy; 2023 | All data stored locally in your browser - no internet required</p>
         </div>
         
         <div class="save-indicator" id="save-indicator">
             <i class="fas fa-check-circle"></i> Data Saved Locally
+        </div>
+        
+        <!-- Confirmation Modal -->
+        <div class="modal confirmation-modal" id="confirmation-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Confirm Action</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <p id="confirmation-message">Are you sure you want to perform this action?</p>
+                <div>
+                    <button class="btn btn-accent" id="confirm-action">Confirm</button>
+                    <button class="btn btn-secondary" id="cancel-action">Cancel</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -530,17 +790,48 @@
             const saveIndicator = document.getElementById('save-indicator');
             const filterSubject = document.getElementById('filter-subject');
             const filterWeek = document.getElementById('filter-week');
+            const filterStatus = document.getElementById('filter-status');
+            const searchInput = document.getElementById('search');
             const applyFilters = document.getElementById('apply-filters');
+            const clearFilters = document.getElementById('clear-filters');
+            const submitBtn = document.getElementById('submit-btn');
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            const editIdField = document.getElementById('edit-id');
+            const exportJsonBtn = document.getElementById('export-json-btn');
+            const importJsonBtn = document.getElementById('import-json-btn');
+            const importFileInput = document.getElementById('import-file');
+            const statsContainer = document.getElementById('stats-container');
+            const confirmationModal = document.getElementById('confirmation-modal');
+            const confirmActionBtn = document.getElementById('confirm-action');
+            const cancelActionBtn = document.getElementById('cancel-action');
+            const confirmationMessage = document.getElementById('confirmation-message');
+            const modalCloseBtn = document.querySelector('.modal-close');
             
             let lessons = [];
+            let currentFilters = {
+                subject: 'all',
+                week: 'all',
+                status: 'all',
+                search: ''
+            };
+            let pendingAction = null;
             
             // Load data from localStorage
             function loadData() {
-                const savedData = localStorage.getItem('lessonData');
-                if (savedData) {
-                    lessons = JSON.parse(savedData);
-                    renderTable();
-                } else {
+                try {
+                    const savedData = localStorage.getItem('lessonData');
+                    if (savedData) {
+                        lessons = JSON.parse(savedData);
+                        renderTable();
+                        updateStats();
+                    } else {
+                        showEmptyState();
+                        updateStats();
+                    }
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    showError('Failed to load data from storage');
+                    lessons = [];
                     showEmptyState();
                 }
             }
@@ -549,8 +840,8 @@
             function showEmptyState() {
                 lessonData.innerHTML = `
                     <tr>
-                        <td colspan="5" style="text-align: center; padding: 30px; color: var(--gray);">
-                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <td colspan="6" class="empty-state">
+                            <i class="fas fa-inbox"></i>
                             <h3>No lessons added yet</h3>
                             <p>Start by adding a lesson using the form above.</p>
                         </td>
@@ -558,15 +849,69 @@
                 `;
             }
             
+            // Update statistics
+            function updateStats() {
+                const totalLessons = lessons.length;
+                const completedLessons = lessons.filter(lesson => lesson.status === 'completed').length;
+                const pendingLessons = totalLessons - completedLessons;
+                const completionRate = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+                
+                statsContainer.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-label">Total Lessons</div>
+                        <div class="stat-value">${totalLessons}</div>
+                    </div>
+                    <div class="stat-card secondary">
+                        <div class="stat-label">Completed</div>
+                        <div class="stat-value">${completedLessons}</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-label">Pending</div>
+                        <div class="stat-value">${pendingLessons}</div>
+                    </div>
+                    <div class="stat-card accent">
+                        <div class="stat-label">Completion Rate</div>
+                        <div class="stat-value">${completionRate}%</div>
+                    </div>
+                `;
+            }
+            
             // Save data to localStorage
             function saveData() {
-                localStorage.setItem('lessonData', JSON.stringify(lessons));
+                try {
+                    localStorage.setItem('lessonData', JSON.stringify(lessons));
+                    
+                    // Show save indicator
+                    saveIndicator.classList.add('show');
+                    setTimeout(() => {
+                        saveIndicator.classList.remove('show');
+                    }, 2000);
+                    
+                    updateStats();
+                } catch (error) {
+                    console.error('Error saving data:', error);
+                    showError('Failed to save data to storage. Your browser may not support localStorage or storage may be full.');
+                }
+            }
+            
+            // Show error message
+            function showError(message) {
+                // Create error indicator similar to save indicator
+                const errorIndicator = document.createElement('div');
+                errorIndicator.className = 'save-indicator';
+                errorIndicator.style.backgroundColor = 'var(--accent)';
+                errorIndicator.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+                document.body.appendChild(errorIndicator);
                 
-                // Show save indicator
-                saveIndicator.classList.add('show');
                 setTimeout(() => {
-                    saveIndicator.classList.remove('show');
-                }, 2000);
+                    errorIndicator.classList.add('show');
+                    setTimeout(() => {
+                        errorIndicator.classList.remove('show');
+                        setTimeout(() => {
+                            document.body.removeChild(errorIndicator);
+                        }, 300);
+                    }, 3000);
+                }, 100);
             }
             
             // Render table with lesson data
@@ -579,23 +924,18 @@
                 }
                 
                 // Apply filters
-                const subjectFilter = filterSubject.value;
-                const weekFilter = filterWeek.value;
-                
-                let filteredLessons = lessons;
-                
-                if (subjectFilter !== 'all') {
-                    filteredLessons = filteredLessons.filter(lesson => lesson.subject === subjectFilter);
-                }
-                
-                if (weekFilter !== 'all') {
-                    filteredLessons = filteredLessons.filter(lesson => lesson.week === weekFilter);
-                }
+                let filteredLessons = lessons.filter(lesson => {
+                    if (currentFilters.subject !== 'all' && lesson.subject !== currentFilters.subject) return false;
+                    if (currentFilters.week !== 'all' && lesson.week !== currentFilters.week) return false;
+                    if (currentFilters.status !== 'all' && lesson.status !== currentFilters.status) return false;
+                    if (currentFilters.search && !lesson.topic.toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
+                    return true;
+                });
                 
                 if (filteredLessons.length === 0) {
                     lessonData.innerHTML = `
                         <tr>
-                            <td colspan="5" style="text-align: center; padding: 20px; color: var(--gray);">
+                            <td colspan="6" style="text-align: center; padding: 20px; color: var(--gray);">
                                 No lessons match the current filters. Try changing your filter settings.
                             </td>
                         </tr>
@@ -603,20 +943,25 @@
                     return;
                 }
                 
-                filteredLessons.forEach((lesson, index) => {
+                // Format subject names
+                const subjectMap = {
+                    'english': 'English',
+                    'math': 'Math',
+                    'science': 'Science',
+                    'filipino': 'Filipino',
+                    'ap': 'Araling Panlipunan',
+                    'epp': 'EPP',
+                    'gmrc': 'GMRC',
+                    'mapeh': 'MAPEH'
+                };
+                
+                filteredLessons.forEach(lesson => {
                     const row = document.createElement('tr');
                     
-                    // Format subject name
-                    const subjectMap = {
-                        'english': 'English',
-                        'math': 'Math',
-                        'science': 'Science',
-                        'filipino': 'Filipino',
-                        'ap': 'Araling Panlipunan',
-                        'epp': 'EPP',
-                        'gmrc': 'GMRC',
-                        'mapeh': 'MAPEH'
-                    };
+                    // Add completed class if lesson is completed
+                    if (lesson.status === 'completed') {
+                        row.classList.add('completed');
+                    }
                     
                     row.innerHTML = `
                         <td>${subjectMap[lesson.subject]}</td>
@@ -624,24 +969,86 @@
                         <td>Day ${lesson.day}</td>
                         <td>${lesson.topic}</td>
                         <td>
-                            <button class="btn btn-accent" style="padding: 5px 10px; font-size: 14px;" onclick="deleteLesson(${index})">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <span class="status-badge ${lesson.status === 'completed' ? 'status-completed' : 'status-pending'}">
+                                ${lesson.status === 'completed' ? 'Completed' : 'Pending'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn edit-btn" data-id="${lesson.id}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="action-btn delete-btn" data-id="${lesson.id}">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
                         </td>
                     `;
                     
                     lessonData.appendChild(row);
                 });
+                
+                // Add event listeners to action buttons
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        editLesson(id);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        showConfirmation('Are you sure you want to delete this lesson?', () => {
+                            deleteLesson(id);
+                        });
+                    });
+                });
+            }
+            
+            // Edit a lesson
+            function editLesson(id) {
+                const lesson = lessons.find(l => l.id === id);
+                if (!lesson) return;
+                
+                // Populate form with lesson data
+                document.getElementById('subject').value = lesson.subject;
+                document.getElementById('week').value = lesson.week;
+                document.getElementById('day').value = lesson.day;
+                document.getElementById('topic').value = lesson.topic;
+                document.getElementById('status').value = lesson.status;
+                document.getElementById('notes').value = lesson.notes || '';
+                
+                // Set edit mode
+                editIdField.value = id;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Lesson';
+                cancelEditBtn.style.display = 'inline-flex';
+                
+                // Scroll to form
+                lessonForm.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // Cancel edit mode
+            function cancelEdit() {
+                editIdField.value = '';
+                lessonForm.reset();
+                submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Lesson';
+                cancelEditBtn.style.display = 'none';
             }
             
             // Delete a lesson
-            window.deleteLesson = function(index) {
-                if (confirm('Are you sure you want to delete this lesson?')) {
-                    lessons.splice(index, 1);
-                    saveData();
-                    renderTable();
-                }
-            };
+            function deleteLesson(id) {
+                lessons = lessons.filter(lesson => lesson.id !== id);
+                saveData();
+                renderTable();
+            }
+            
+            // Show confirmation dialog
+            function showConfirmation(message, callback) {
+                confirmationMessage.textContent = message;
+                pendingAction = callback;
+                confirmationModal.style.display = 'flex';
+            }
             
             // Handle form submission
             lessonForm.addEventListener('submit', function(e) {
@@ -651,21 +1058,59 @@
                 const week = document.getElementById('week').value;
                 const day = document.getElementById('day').value;
                 const topic = document.getElementById('topic').value;
+                const status = document.getElementById('status').value;
+                const notes = document.getElementById('notes').value;
+                const editId = editIdField.value;
                 
-                // Add new lesson
-                lessons.push({
-                    subject,
-                    week,
-                    day,
-                    topic
-                });
+                // Validate for duplicates when adding new lesson
+                if (!editId) {
+                    const isDuplicate = lessons.some(lesson => 
+                        lesson.subject === subject && 
+                        lesson.week === week && 
+                        lesson.day === day && 
+                        lesson.topic === topic
+                    );
+                    
+                    if (isDuplicate) {
+                        showError('This lesson already exists!');
+                        return;
+                    }
+                }
+                
+                if (editId) {
+                    // Update existing lesson
+                    const index = lessons.findIndex(lesson => lesson.id === editId);
+                    if (index !== -1) {
+                        lessons[index] = {
+                            ...lessons[index],
+                            subject,
+                            week,
+                            day,
+                            topic,
+                            status,
+                            notes
+                        };
+                    }
+                } else {
+                    // Add new lesson
+                    lessons.push({
+                        id: Date.now().toString(), // Unique ID
+                        subject,
+                        week,
+                        day,
+                        topic,
+                        status,
+                        notes,
+                        createdAt: new Date().toISOString()
+                    });
+                }
                 
                 // Save and render
                 saveData();
                 renderTable();
                 
                 // Reset form
-                lessonForm.reset();
+                cancelEdit();
             });
             
             // Handle print button
@@ -683,24 +1128,39 @@
                 doc.text('Lesson Tracker', 14, 15);
                 doc.setFontSize(12);
                 doc.setTextColor(100);
-                doc.text('All subjects and their lesson progress', 14, 22);
+                
+                // Add filters info if any are applied
+                let filtersText = 'All Lessons';
+                if (currentFilters.subject !== 'all' || currentFilters.week !== 'all' || currentFilters.status !== 'all' || currentFilters.search) {
+                    filtersText = 'Filtered Lessons';
+                    
+                    if (currentFilters.subject !== 'all') {
+                        filtersText += ` | Subject: ${document.getElementById('filter-subject').options[document.getElementById('filter-subject').selectedIndex].text}`;
+                    }
+                    if (currentFilters.week !== 'all') {
+                        filtersText += ` | Week: ${currentFilters.week}`;
+                    }
+                    if (currentFilters.status !== 'all') {
+                        filtersText += ` | Status: ${currentFilters.status}`;
+                    }
+                    if (currentFilters.search) {
+                        filtersText += ` | Search: ${currentFilters.search}`;
+                    }
+                }
+                
+                doc.text(filtersText, 14, 22);
                 
                 // Get filtered data for PDF
-                const subjectFilter = filterSubject.value;
-                const weekFilter = filterWeek.value;
-                
-                let filteredLessons = lessons;
-                
-                if (subjectFilter !== 'all') {
-                    filteredLessons = filteredLessons.filter(lesson => lesson.subject === subjectFilter);
-                }
-                
-                if (weekFilter !== 'all') {
-                    filteredLessons = filteredLessons.filter(lesson => lesson.week === weekFilter);
-                }
+                let filteredLessons = lessons.filter(lesson => {
+                    if (currentFilters.subject !== 'all' && lesson.subject !== currentFilters.subject) return false;
+                    if (currentFilters.week !== 'all' && lesson.week !== currentFilters.week) return false;
+                    if (currentFilters.status !== 'all' && lesson.status !== currentFilters.status) return false;
+                    if (currentFilters.search && !lesson.topic.toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
+                    return true;
+                });
                 
                 // Format data for PDF table
-                const tableColumn = ["Subject", "Week", "Day", "Topic Name"];
+                const tableColumn = ["Subject", "Week", "Day", "Topic", "Status"];
                 const tableRows = [];
                 
                 // Format subject names for PDF
@@ -720,7 +1180,8 @@
                         subjectMap[lesson.subject],
                         `Week ${lesson.week}`,
                         `Day ${lesson.day}`,
-                        lesson.topic
+                        lesson.topic,
+                        lesson.status === 'completed' ? 'Completed' : 'Pending'
                     ];
                     tableRows.push(lessonData);
                 });
@@ -753,16 +1214,136 @@
             
             // Handle reset button
             resetBtn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to clear all lesson data? This cannot be undone.')) {
+                showConfirmation('Are you sure you want to clear all lesson data? This cannot be undone.', () => {
                     lessons = [];
                     saveData();
                     renderTable();
-                }
+                    cancelEdit();
+                });
             });
             
             // Handle filter application
             applyFilters.addEventListener('click', function() {
+                currentFilters.subject = filterSubject.value;
+                currentFilters.week = filterWeek.value;
+                currentFilters.status = filterStatus.value;
+                currentFilters.search = searchInput.value;
                 renderTable();
+            });
+            
+            // Handle clear filters
+            clearFilters.addEventListener('click', function() {
+                filterSubject.value = 'all';
+                filterWeek.value = 'all';
+                filterStatus.value = 'all';
+                searchInput.value = '';
+                currentFilters = {
+                    subject: 'all',
+                    week: 'all',
+                    status: 'all',
+                    search: ''
+                };
+                renderTable();
+            });
+            
+            // Handle cancel edit
+            cancelEditBtn.addEventListener('click', cancelEdit);
+            
+            // Handle export JSON
+            exportJsonBtn.addEventListener('click', function() {
+                const dataStr = JSON.stringify(lessons, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `lessons-${new Date().toISOString().slice(0, 10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            });
+            
+            // Handle import JSON
+            importJsonBtn.addEventListener('click', function() {
+                importFileInput.click();
+            });
+            
+            importFileInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        
+                        // Validate imported data
+                        if (!Array.isArray(importedData)) {
+                            throw new Error('Imported data is not valid');
+                        }
+                        
+                        // Check if data has expected structure
+                        const isValid = importedData.every(item => 
+                            item && 
+                            typeof item.subject === 'string' && 
+                            typeof item.week === 'string' && 
+                            typeof item.day === 'string' && 
+                            typeof item.topic === 'string'
+                        );
+                        
+                        if (!isValid) {
+                            throw new Error('Imported data has invalid structure');
+                        }
+                        
+                        showConfirmation(`Import ${importedData.length} lessons? This will replace your current data.`, () => {
+                            lessons = importedData;
+                            
+                            // Ensure all lessons have IDs
+                            lessons.forEach(lesson => {
+                                if (!lesson.id) {
+                                    lesson.id = Date.now().toString();
+                                }
+                            });
+                            
+                            saveData();
+                            renderTable();
+                            // Reset file input
+                            importFileInput.value = '';
+                        });
+                    } catch (error) {
+                        console.error('Error importing data:', error);
+                        showError('Failed to import data. The file may be corrupted or in an invalid format.');
+                        // Reset file input
+                        importFileInput.value = '';
+                    }
+                };
+                reader.readAsText(file);
+            });
+            
+            // Handle confirmation modal
+            confirmActionBtn.addEventListener('click', function() {
+                if (pendingAction) {
+                    pendingAction();
+                }
+                confirmationModal.style.display = 'none';
+                pendingAction = null;
+            });
+            
+            cancelActionBtn.addEventListener('click', function() {
+                confirmationModal.style.display = 'none';
+                pendingAction = null;
+            });
+            
+            modalCloseBtn.addEventListener('click', function() {
+                confirmationModal.style.display = 'none';
+                pendingAction = null;
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === confirmationModal) {
+                    confirmationModal.style.display = 'none';
+                    pendingAction = null;
+                }
             });
             
             // Initialize the app
