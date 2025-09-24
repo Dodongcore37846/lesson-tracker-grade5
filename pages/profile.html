@@ -1,0 +1,58 @@
+<!-- Teacher Profile page -->
+<section id="profile-content" class="page-content">
+  <div class="widget">
+    <div class="widget-header">
+      <h3 class="widget-title">Teacher Profile</h3>
+    </div>
+    <div class="widget-body" id="profile-body">
+      <p class="text-center">Loading profile...</p>
+    </div>
+  </div>
+</section>
+<script>
+  // Render profile details after the fragment is injected
+  (async function renderProfile(){
+    try {
+      const container = document.getElementById('profile-body');
+      // Prefer Supabase user if client available
+      if (window.supabase) {
+        try {
+          const client = supabase.createClient('https://<YOUR-PROJECT>.supabase.co', '');
+          const { data: { user } } = await client.auth.getUser();
+          if (user) {
+            const name = user.user_metadata?.name || user.email;
+            const gradeLevel = user.user_metadata?.gradeLevel || 'Not provided';
+            container.innerHTML = `
+              <div style="max-width:600px;margin:0 auto;">
+                <p><strong>Full Name:</strong> ${name}</p>
+                <p><strong>Grade Level Taught:</strong> ${gradeLevel}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+              </div>
+            `;
+            return;
+          }
+        } catch (err) {
+          console.warn('Supabase profile read failed', err);
+        }
+      }
+
+      // Fallback to localStorage
+      const userEmail = localStorage.getItem('authUser');
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = users.find(u => u.email === userEmail);
+      if (!user) {
+        container.innerHTML = '<p class="text-center">No profile found.</p>';
+        return;
+      }
+      container.innerHTML = `
+        <div style="max-width:600px;margin:0 auto;">
+          <p><strong>Full Name:</strong> ${user.name}</p>
+          <p><strong>Grade Level Taught:</strong> ${user.gradeLevel}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
+        </div>
+      `;
+    } catch (err) {
+      console.error(err);
+    }
+  })();
+</script>

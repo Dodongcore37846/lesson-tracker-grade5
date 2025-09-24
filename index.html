@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuroPlan - DepEd Teachers' Task Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+    <style>
+        :root {
+            /* Color Palette */
+            --primary-navy: #0F2C59;
+            --accent-coral: #E3655B;
+            --background-cream: #F8F4E1;
+            --gradient-start: #6A93CB;
+            --gradient-end: #6ACB93;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --white: #FFFFFF;
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --shadow-medium: rgba(0, 0, 0, 0.1);
+            --shadow-dark: rgba(0, 0, 0, 0.15);
+            
+            /* Typography */
+            --font-heading: 'Poppins', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-xxl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            
+            /* Transitions */
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--background-cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Glass Morphism Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Neumorphism Effect */
+        .neumorphic {
+            background: var(--background-cream);
+            box-shadow: 5px 5px 10px var(--shadow-light),
+                        -5px -5px 10px rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-lg);
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 250px;
+            background: var(--primary-navy);
+            color: var(--white);
+            padding: var(--space-lg);
+            transition: width var(--transition-normal);
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .sidebar.collapsed .logo-text {
+            display: none;
+        }
+
+        .toggle-sidebar {
+            background: none;
+            border: none;
+            color: var(--white);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .sidebar.collapsed .toggle-sidebar {
+            transform: rotate(180deg);
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: var(--space-sm);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            transition: margin-left var(--transition-normal);
+            padding: var(--space-lg);
+        }
+
+        .sidebar.collapsed ~ .main-content {
+            margin-left: 70px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--shadow-light);
+        }
+
+        .page-title {
+            font-family: var(--font-heading);
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--primary-navy);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-input {
+            padding: var(--space-md) var(--space-lg);
+            padding-left: 2.5rem;
+            border: none;
+            border-radius: var(--radius-lg);
+            background: var(--white);
+            box-shadow: 0 2px 10px var(--shadow-light);
+            width: 250px;
+            transition: width var(--transition-fast);
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 2px 15px var(--shadow-medium);
+            width: 300px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .widget {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: 0 4px 20px var(--shadow-light);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .widget:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px var(--shadow-medium);
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .widget-title {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-navy);
+        }
+
+        .widget-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .widget-action {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color var(--transition-fast);
+        }
+
+        .widget-action:hover {
+            color: var(--primary-navy);
+        }
+
+        /* Task Card */
+        .task-card {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            box-shadow: 0 2px 8px var(--shadow-light);
+            border-left: 4px solid var(--gradient-start);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .task-card:hover {
+            box-shadow: 0 4px 12px var(--shadow-medium);
+            transform: translateY(-2px);
+        }
+
+        .task-card.high-priority {
+            border-left-color: var(--accent-coral);
+        }
+
+        .task-card.medium-priority {
+            border-left-color: #FFB74D;
+        }
+
+        .task-card.low-priority {
+            border-left-color: var(--gradient-end);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-sm);
+        }
+
+        .task-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary-navy);
+            margin-bottom: var(--space-xs);
+        }
+
+        .task-meta {
+            display: flex;
+            gap: var(--space-md);
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: var(--space-sm);
+        }
+
+        .task-tag {
+            background: rgba(106, 147, 203, 0.1);
+            color: var(--primary-navy);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: var(--space-sm);
+            justify-content: flex-end;
+        }
+
+        .task-action {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: color var(--transition-fast);
+        }
+
+        .task-action:hover {
+            color: var(--primary-navy);
+        }
+
+        .task-action.complete:hover {
+            color: var(--gradient-end);
+        }
+
+        .task-action.delete:hover {
+            color: var(--accent-coral);
+        }
+
+        /* Task Form */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px var(--shadow-dark);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--shadow-light);
+        }
+
+        .modal-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-navy);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+
+        .close-modal:hover {
+            color: var(--accent-coral);
+        }
+
+        .modal-body {
+            padding: var(--space-lg);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            font-weight: 500;
+            color: var(--primary-navy);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: var(--space-md);
+            border: 1px solid var(--shadow-light);
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--gradient-start);
+            box-shadow: 0 0 0 3px rgba(106, 147, 203, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .nlp-input {
+            position: relative;
+        }
+
+        .nlp-hint {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border: 1px solid var(--shadow-light);
+            border-top: none;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            padding: var(--space-sm);
+            font-size: 0.85rem;
+            color: var(--text-light);
+            display: none;
+        }
+
+        .nlp-input:focus-within .nlp-hint {
+            display: block;
+        }
+
+        .priority-badges {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .priority-badge {
+            flex: 1;
+            text-align: center;
+            padding: var(--space-sm);
+            border: 1px solid var(--shadow-light);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .priority-badge:hover {
+            background: rgba(106, 147, 203, 0.05);
+        }
+
+        .priority-badge.active {
+            background: var(--primary-navy);
+            color: var(--white);
+            border-color: var(--primary-navy);
+        }
+
+        .priority-badge.high.active {
+            background: var(--accent-coral);
+            border-color: var(--accent-coral);
+        }
+
+        .priority-badge.medium.active {
+            background: #FFB74D;
+            border-color: #FFB74D;
+        }
+
+        .priority-badge.low.active {
+            background: var(--gradient-end);
+            border-color: var(--gradient-end);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-md);
+            margin-top: var(--space-xl);
+        }
+
+        .btn {
+            padding: var(--space-md) var(--space-lg);
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(106, 147, 203, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 1px solid var(--shadow-light);
+        }
+
+        .btn-secondary:hover {
+            background: #f5f5f5;
+        }
+
+        /* Focus Mode */
+        .focus-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--background-cream);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-xl);
+        }
+
+        .focus-mode.active {
+            display: flex;
+        }
+
+        .focus-task {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xxl);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px var(--shadow-dark);
+        }
+
+        .focus-title {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-navy);
+            margin-bottom: var(--space-lg);
+        }
+
+        .focus-description {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: var(--space-xl);
+        }
+
+        .focus-actions {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-md);
+        }
+
+        .exit-focus {
+            position: absolute;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .exit-focus:hover {
+            color: var(--accent-coral);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar .nav-text {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-md);
+            }
+            
+            .user-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-input {
+                width: 200px;
+            }
+            
+            .search-input:focus {
+                width: 250px;
+            }
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-sm { margin-top: var(--space-sm); }
+        .mt-md { margin-top: var(--space-md); }
+        .mt-lg { margin-top: var(--space-lg); }
+        .mt-xl { margin-top: var(--space-xl); }
+
+        .mb-sm { margin-bottom: var(--space-sm); }
+        .mb-md { margin-bottom: var(--space-md); }
+        .mb-lg { margin-bottom: var(--space-lg); }
+        .mb-xl { margin-bottom: var(--space-xl); }
+
+        .flex { display: flex; }
+        .flex-column { flex-direction: column; }
+        .justify-between { justify-content: space-between; }
+        .align-center { align-items: center; }
+    </style>
+</head>
+<body>
+    <!-- Authentication container (shown when user is not signed in) -->
+    <div id="auth-container" class="hidden"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">📚</div>
+                    <div class="logo-text">GuroPlan</div>
+                </div>
+                <button class="toggle-sidebar">←</button>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-page="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="tasks">
+                        <span class="nav-icon">✅</span>
+                        <span class="nav-text">Tasks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="lesson-plans">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-text">Lesson Plans</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="calendar">
+                        <span class="nav-icon">📅</span>
+                        <span class="nav-text">Calendar</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="reports">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="settings">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="profile">
+                        <span class="nav-icon">👩‍🏫</span>
+                        <span class="nav-text">Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-action="signout">
+                        <span class="nav-icon">🔓</span>
+                        <span class="nav-text">Sign Out</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1 class="page-title" id="page-title">Dashboard</h1>
+                <div class="user-actions">
+                    <div class="search-bar">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" placeholder="Search tasks, lessons...">
+                    </div>
+                    <div class="user-profile">
+                        <div class="avatar">JT</div>
+                        <span>Teacher Juan</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page container: content for each tab is loaded from separate HTML files in ./pages/ -->
+            <div id="page-container">
+                <!-- Initial content will be fetched and injected by JS (dashboard by default) -->
+                <div class="loading text-center mt-lg">Loading...</div>
+            </div>
+
+            <!-- Other page content sections would go here -->
+        </main>
+    </div>
+
+    <!-- Task Form Modal -->
+    <div class="modal" id="task-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Task</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="task-form">
+                    <div class="form-group nlp-input">
+                        <label for="nlp-input" class="form-label">Natural Language Input (Try: "Prepare lesson plan for Science Grade 6 about solar system next Friday high priority")</label>
+                        <textarea id="nlp-input" class="form-input form-textarea" placeholder="Describe your task naturally..."></textarea>
+                        <div class="nlp-hint">The system will automatically parse due date, priority, subject, and other details from your description.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="task-title" class="form-label">Task Title</label>
+                        <input type="text" id="task-title" class="form-input" placeholder="Enter task title">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="task-description" class="form-label">Description</label>
+                        <textarea id="task-description" class="form-input form-textarea" placeholder="Enter task description"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="task-subject" class="form-label">Subject</label>
+                            <select id="task-subject" class="form-select">
+                                <option value="">Select Subject</option>
+                                <option value="science">Science</option>
+                                <option value="math">Mathematics</option>
+                                <option value="english">English</option>
+                                <option value="filipino">Filipino</option>
+                                <option value="ap">Araling Panlipunan</option>
+                                <option value="esp">Edukasyon sa Pagpapakatao</option>
+                                <option value="tle">Technology and Livelihood Education</option>
+                                <option value="mapeh">MAPEH</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="task-grade" class="form-label">Grade Level</label>
+                            <select id="task-grade" class="form-select">
+                                <option value="">Select Grade Level</option>
+                                <option value="kinder">Kindergarten</option>
+                                <option value="grade1">Grade 1</option>
+                                <option value="grade2">Grade 2</option>
+                                <option value="grade3">Grade 3</option>
+                                <option value="grade4">Grade 4</option>
+                                <option value="grade5">Grade 5</option>
+                                <option value="grade6">Grade 6</option>
+                                <option value="grade7">Grade 7</option>
+                                <option value="grade8">Grade 8</option>
+                                <option value="grade9">Grade 9</option>
+                                <option value="grade10">Grade 10</option>
+                                <option value="grade11">Grade 11</option>
+                                <option value="grade12">Grade 12</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="task-due-date" class="form-label">Due Date</label>
+                            <input type="date" id="task-due-date" class="form-input">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Priority</label>
+                            <div class="priority-badges">
+                                <div class="priority-badge low" data-priority="low">Low</div>
+                                <div class="priority-badge medium" data-priority="medium">Medium</div>
+                                <div class="priority-badge high" data-priority="high">High</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="task-template" class="form-label">Task Template</label>
+                        <select id="task-template" class="form-select">
+                            <option value="">Select Template (Optional)</option>
+                            <option value="ipcrf">IPCRF</option>
+                            <option value="sf2">School Form 2 (SF2)</option>
+                            <option value="sf10">School Form 10 (SF10)</option>
+                            <option value="lac">LAC Session Report</option>
+                            <option value="ptc">Parent-Teacher Conference</option>
+                            <option value="lesson-plan">Lesson Plan</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-task">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Focus Mode -->
+    <div class="focus-mode" id="focus-mode">
+        <button class="exit-focus">&times;</button>
+        <div class="focus-task">
+            <h2 class="focus-title" id="focus-task-title">Task Title</h2>
+            <p class="focus-description" id="focus-task-description">Task description will appear here.</p>
+            <div class="focus-actions">
+                <button class="btn btn-primary" id="complete-focus-task">Mark Complete</button>
+                <button class="btn btn-secondary" id="pause-focus-task">Take a Break</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample task data
+        let tasks = [
+            {
+                id: 1,
+                title: "Complete SF2 Forms",
+                description: "Fill out School Form 2 for the current grading period",
+                subject: "Administrative",
+                gradeLevel: "",
+                dueDate: "2023-10-20",
+                priority: "high",
+                completed: false,
+                tags: ["Administrative"]
+            },
+            {
+                id: 2,
+                title: "Prepare Science Lesson",
+                description: "Create lesson plan for Grade 6 Science about the solar system",
+                subject: "Science",
+                gradeLevel: "Grade 6",
+                dueDate: "2023-10-18",
+                priority: "medium",
+                completed: false,
+                tags: ["Teaching"]
+            },
+            {
+                id: 3,
+                title: "Grade English Papers",
+                description: "Check and grade the recent English examination papers",
+                subject: "English",
+                gradeLevel: "Grade 5",
+                dueDate: "2023-10-22",
+                priority: "medium",
+                completed: false,
+                tags: ["Teaching"]
+            },
+            {
+                id: 4,
+                title: "Attend LAC Session",
+                description: "Participate in the Learning Action Cell session on new teaching strategies",
+                subject: "Professional Development",
+                gradeLevel: "",
+                dueDate: "2023-10-25",
+                priority: "low",
+                completed: false,
+                tags: ["Meeting"]
+            }
+        ];
+
+    // DOM Elements (only query static elements here)
+    const sidebar = document.querySelector('.sidebar');
+    const toggleSidebarBtn = document.querySelector('.toggle-sidebar');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const pageTitle = document.getElementById('page-title');
+    const pageContainer = document.getElementById('page-container');
+    const taskModal = document.getElementById('task-modal');
+    const closeModalBtn = document.querySelector('.close-modal');
+    const cancelTaskBtn = document.getElementById('cancel-task');
+    const focusMode = document.getElementById('focus-mode');
+    const focusTaskTitle = document.getElementById('focus-task-title');
+    const focusTaskDescription = document.getElementById('focus-task-description');
+    const exitFocusBtn = document.querySelector('.exit-focus');
+    const completeFocusTaskBtn = document.getElementById('complete-focus-task');
+    const pauseFocusTaskBtn = document.getElementById('pause-focus-task');
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            setMinDateForDueDate();
+            setupEventListeners();
+            // Load default page (dashboard)
+            // If user not authenticated, show auth page first
+            const authUser = localStorage.getItem('authUser');
+            if (!authUser) {
+                // show auth page
+                showAuth();
+            } else {
+                loadPage('dashboard');
+            }
+            // populate header with user info if signed in
+            populateHeaderUser();
+        });
+
+        function populateHeaderUser() {
+            const email = localStorage.getItem('authUser');
+            const avatarEl = document.querySelector('.avatar');
+            const nameEl = document.querySelector('.user-profile span');
+            if (!email) {
+                if (avatarEl) avatarEl.textContent = 'JT';
+                if (nameEl) nameEl.textContent = 'Teacher Juan';
+                return;
+            }
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email);
+            if (!user) return;
+            const initials = user.name.split(' ').map(s=>s[0]||'').slice(0,2).join('').toUpperCase();
+            if (avatarEl) avatarEl.textContent = initials;
+            if (nameEl) nameEl.textContent = user.name;
+        }
+
+        // Set minimum date for due date input to today
+        function setMinDateForDueDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const minDate = `${yyyy}-${mm}-${dd}`;
+            // If the task due date input exists in DOM, set min
+            const dateInput = document.getElementById('task-due-date');
+            if (dateInput) dateInput.min = minDate;
+        }
+
+        // Load a page fragment from ./pages/<page>.html into #page-container
+        async function loadPage(page) {
+            const container = document.getElementById('page-container');
+            container.innerHTML = '<div class="loading text-center mt-lg">Loading...</div>';
+            try {
+                const res = await fetch(`pages/${page}.html`);
+                if (!res.ok) throw new Error('Page not found');
+                const html = await res.text();
+
+                // Parse the HTML and extract script tags so we can execute them after insertion
+                const tmp = document.createElement('div');
+                tmp.innerHTML = html;
+                const scripts = Array.from(tmp.querySelectorAll('script'));
+                // Remove scripts from tmp so we can set innerHTML without executing
+                scripts.forEach(s => s.parentNode && s.parentNode.removeChild(s));
+
+                container.innerHTML = tmp.innerHTML;
+
+                // Move any stylesheet <link> or <style> nodes from the fragment into <head>
+                // so styles apply consistently when fragments are injected.
+                const injectedLinks = Array.from(container.querySelectorAll('link[rel="stylesheet"]'));
+                injectedLinks.forEach(l => document.head.appendChild(l));
+                const injectedStyles = Array.from(container.querySelectorAll('style'));
+                injectedStyles.forEach(s => document.head.appendChild(s));
+
+                // After injecting, re-run UI bindings for page-specific elements
+                setMinDateForDueDate();
+                renderTasks();
+
+                // scroll to top of page container
+                container.scrollTop = 0;
+
+                // Execute extracted scripts (preserve external src or inline content)
+                for (const s of scripts) {
+                    const newScript = document.createElement('script');
+                    if (s.src) {
+                        newScript.src = s.src;
+                        // preserve async/defer if present
+                        if (s.async) newScript.async = true;
+                        if (s.defer) newScript.defer = true;
+                        document.head.appendChild(newScript);
+                    } else {
+                        newScript.textContent = s.textContent;
+                        document.body.appendChild(newScript);
+                    }
+                }
+            } catch (err) {
+                container.innerHTML = `<div class="text-center mt-lg">Failed to load page: ${page}</div>`;
+                console.error(err);
+            }
+        }
+
+        /* ------------------ Authentication helpers ------------------ */
+        function showAuth() {
+            // load auth page into page-container and hide the main app
+            document.querySelector('.app-container').classList.add('hidden');
+            const authContainer = document.getElementById('auth-container');
+            fetch('pages/auth.html').then(r => r.text()).then(html => {
+                authContainer.innerHTML = html;
+                authContainer.classList.remove('hidden');
+            }).catch(err => {
+                console.error('Failed to load auth page', err);
+            });
+        }
+
+        function hideAuth() {
+            const authContainer = document.getElementById('auth-container');
+            authContainer.innerHTML = '';
+            authContainer.classList.add('hidden');
+            document.querySelector('.app-container').classList.remove('hidden');
+        }
+
+        async function hashPassword(password) {
+            const enc = new TextEncoder();
+            const data = enc.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Supabase initialization (replace SUPABASE_URL with your project's URL)
+    const SUPABASE_URL = 'https://szefwlwmeomnwxwsotne.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN6ZWZ3bHdtZW9tbnd4d3NvdG5lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MjcyMzQsImV4cCI6MjA3MjMwMzIzNH0.pKrqeQ_oHtwYx1KdOzry7PAGP1bCX6GMoyCJJRLZpzw';
+        let supabaseClient = null;
+        try {
+            if (window.supabase && SUPABASE_URL.indexOf('<') === -1) {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch (err) {
+            console.warn('Supabase init failed or URL placeholder used. Falling back to localStorage auth.');
+        }
+
+        async function registerUser({ name, gradeLevel, email, password }) {
+            // If supabase is configured, try to use it
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient.auth.signUp({ email, password, options: { data: { name, gradeLevel } } });
+                    if (error) {
+                        alert('Sign up failed: ' + error.message);
+                        return false;
+                    }
+                    // signUp with Supabase typically requires email confirmation depending on settings
+                    return true;
+                } catch (err) {
+                    console.error('Supabase signUp error', err);
+                    alert('Sign up failed.');
+                    return false;
+                }
+            }
+
+            // localStorage fallback
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.find(u => u.email === email)) {
+                alert('An account with that email already exists. Please sign in.');
+                return false;
+            }
+            const pwdHash = await hashPassword(password);
+            const user = { name, gradeLevel, email, passwordHash: pwdHash };
+            users.push(user);
+            localStorage.setItem('users', JSON.stringify(users));
+            // do not auto-login after signup; user should sign in
+            return true;
+        }
+
+        async function loginUser({ email, password }) {
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                    if (error) {
+                        console.warn('Supabase signIn error', error);
+                        return false;
+                    }
+                    // store authUser locally for UI convenience
+                    localStorage.setItem('authUser', email);
+                    return true;
+                } catch (err) {
+                    console.error('Supabase signIn error', err);
+                    return false;
+                }
+            }
+
+            // localStorage fallback
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email);
+            if (!user) return false;
+            const pwdHash = await hashPassword(password);
+            if (pwdHash === user.passwordHash) {
+                localStorage.setItem('authUser', email);
+                return true;
+            }
+            return false;
+        }
+
+        function signOut() {
+            localStorage.removeItem('authUser');
+            // go back to auth page
+            showAuth();
+            populateHeaderUser();
+        }
+
+        // Delegated events for auth forms and sign out
+        document.body.addEventListener('submit', async function(e) {
+            if (e.target && e.target.id === 'signup-form') {
+                e.preventDefault();
+                const name = document.getElementById('signup-name')?.value.trim();
+                const gradeLevel = document.getElementById('signup-grade')?.value;
+                const email = document.getElementById('signup-email')?.value.trim().toLowerCase();
+                const password = document.getElementById('signup-password')?.value;
+                if (!name || !gradeLevel || !email || !password) {
+                    alert('Please fill all required fields for sign up.');
+                    return;
+                }
+                const ok = await registerUser({ name, gradeLevel, email, password });
+                if (ok) {
+                    // Do not auto-login. Prompt user to sign in.
+                    alert('Account created successfully. Please sign in.');
+                    // switch to sign-in panel if auth UI present
+                    const signinPanel = document.getElementById('signin-panel');
+                    const signupPanel = document.getElementById('signup-panel');
+                    if (signinPanel && signupPanel) {
+                        signupPanel.classList.add('hidden');
+                        signinPanel.classList.remove('hidden');
+                    }
+                }
+            }
+
+            if (e.target && e.target.id === 'signin-form') {
+                e.preventDefault();
+                const email = document.getElementById('signin-email')?.value.trim().toLowerCase();
+                const password = document.getElementById('signin-password')?.value;
+                if (!email || !password) {
+                    alert('Please enter email and password.');
+                    return;
+                }
+                const ok = await loginUser({ email, password });
+                if (ok) {
+                    hideAuth();
+                    loadPage('dashboard');
+                    populateHeaderUser();
+                } else {
+                    alert('Invalid email or password.');
+                }
+            }
+        });
+
+        // Delegated click handlers to toggle auth panels
+        document.body.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'show-signup') {
+                e.preventDefault();
+                document.getElementById('signin-panel')?.classList.add('hidden');
+                document.getElementById('signup-panel')?.classList.remove('hidden');
+            }
+            if (e.target && e.target.id === 'show-signin') {
+                e.preventDefault();
+                document.getElementById('signup-panel')?.classList.add('hidden');
+                document.getElementById('signin-panel')?.classList.remove('hidden');
+            }
+        });
+
+        // Delegated click for signout nav action
+        document.body.addEventListener('click', function(e) {
+            const link = e.target.closest('.nav-link');
+            if (link && link.getAttribute('data-action') === 'signout') {
+                e.preventDefault();
+                signOut();
+            }
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Toggle sidebar
+            toggleSidebarBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+            });
+
+            // Navigation: load pages from ./pages/<page>.html
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+
+                    // Update active nav link
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Update page title
+                    pageTitle.textContent = this.querySelector('.nav-text').textContent;
+
+                    // Load page fragment
+                    loadPage(page);
+                });
+            });
+
+            // Open task modal (global listener - works for dynamically injected buttons)
+            document.body.addEventListener('click', function(e) {
+                if (e.target && (e.target.id === 'add-task-btn' || e.target.id === 'add-task-btn-2' || e.target.matches('.open-task-modal'))) {
+                    taskModal.classList.add('active');
+                }
+            });
+
+            // Close task modal
+            closeModalBtn.addEventListener('click', closeTaskModal);
+            cancelTaskBtn.addEventListener('click', closeTaskModal);
+            taskModal.addEventListener('click', function(e) {
+                if (e.target === taskModal) {
+                    closeTaskModal();
+                }
+            });
+
+            // Priority badge selection (delegated to body for dynamically loaded content)
+            document.body.addEventListener('click', function(e) {
+                const badge = e.target.closest('.priority-badge');
+                if (badge) {
+                    document.querySelectorAll('.priority-badge').forEach(b => b.classList.remove('active'));
+                    badge.classList.add('active');
+                }
+            });
+
+            // NLP input parsing (use input event on body to capture dynamically injected textarea)
+            document.body.addEventListener('input', function(e) {
+                if (e.target && e.target.id === 'nlp-input') {
+                    parseNLPInput(e.target.value);
+                }
+            });
+
+            // Task form submission (delegated)
+            document.body.addEventListener('submit', function(e) {
+                if (e.target && e.target.id === 'task-form') {
+                    e.preventDefault();
+                    saveTask();
+                }
+            });
+
+            // Focus mode
+            exitFocusBtn.addEventListener('click', function() {
+                focusMode.classList.remove('active');
+            });
+
+            completeFocusTaskBtn.addEventListener('click', function() {
+                const focusedTaskId = focusMode.getAttribute('data-task-id');
+                if (focusedTaskId) {
+                    completeTask(parseInt(focusedTaskId));
+                }
+                focusMode.classList.remove('active');
+            });
+
+            pauseFocusTaskBtn.addEventListener('click', function() {
+                focusMode.classList.remove('active');
+            });
+        }
+
+        // Close task modal
+        function closeTaskModal() {
+            taskModal.classList.remove('active');
+            const form = document.getElementById('task-form');
+            if (form) form.reset();
+            const badges = document.querySelectorAll('.priority-badge');
+            badges.forEach(badge => badge.classList.remove('active'));
+        }
+
+        // Parse natural language input
+        function parseNLPInput(text) {
+            if (!text) return;
+            
+            // Simple NLP simulation - in a real app, this would be more sophisticated
+            const lowerText = text.toLowerCase();
+            
+            // Extract priority
+            if (lowerText.includes('high priority') || lowerText.includes('urgent')) {
+                setPriority('high');
+            } else if (lowerText.includes('medium priority') || lowerText.includes('normal')) {
+                setPriority('medium');
+            } else if (lowerText.includes('low priority')) {
+                setPriority('low');
+            }
+            
+            // Extract due date (simple pattern matching)
+            const datePatterns = [
+                /(next )?(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i,
+                /(tomorrow|today)/i,
+                /(\d{1,2}\/\d{1,2}\/\d{4})/,
+                /(\d{1,2}-\d{1,2}-\d{4})/,
+                /(january|february|march|april|may|june|july|august|september|october|november|december) \d{1,2}/i
+            ];
+            
+            for (const pattern of datePatterns) {
+                const match = text.match(pattern);
+                if (match) {
+                    // In a real app, we would parse this into an actual date
+                    // For this demo, we'll just set a placeholder
+                    const td = document.getElementById('task-due-date');
+                    if (td) td.value = "2023-10-20";
+                    break;
+                }
+            }
+            
+            // Extract subject
+            const subjects = ['science', 'math', 'english', 'filipino', 'ap', 'esp', 'tle', 'mapeh'];
+            for (const subject of subjects) {
+                if (lowerText.includes(subject)) {
+                    const subj = document.getElementById('task-subject');
+                    if (subj) subj.value = subject;
+                    break;
+                }
+            }
+            
+            // Extract grade level
+            const grades = ['kinder', 'grade 1', 'grade 2', 'grade 3', 'grade 4', 'grade 5', 'grade 6', 
+                           'grade 7', 'grade 8', 'grade 9', 'grade 10', 'grade 11', 'grade 12'];
+            for (const grade of grades) {
+                if (lowerText.includes(grade)) {
+                    const g = document.getElementById('task-grade');
+                    if (g) g.value = grade.replace(' ', '');
+                    break;
+                }
+            }
+            
+            // Set title from the first sentence
+            const firstSentence = text.split('.')[0];
+            if (firstSentence && firstSentence.length > 5) {
+                const t = document.getElementById('task-title');
+                if (t) t.value = firstSentence;
+            }
+        }
+
+        // Set priority
+        function setPriority(priority) {
+            const badges = document.querySelectorAll('.priority-badge');
+            badges.forEach(badge => {
+                badge.classList.remove('active');
+                if (badge.getAttribute('data-priority') === priority) {
+                    badge.classList.add('active');
+                }
+            });
+        }
+
+        // Save task
+        function saveTask() {
+            const titleEl = document.getElementById('task-title');
+            const title = titleEl?.value.trim() || '';
+            if (!title) {
+                alert('Please enter a task title');
+                return;
+            }
+
+            const description = document.getElementById('task-description')?.value.trim() || '';
+            const subject = document.getElementById('task-subject')?.value || '';
+            const gradeLevel = document.getElementById('task-grade')?.value || '';
+            const dueDate = document.getElementById('task-due-date')?.value || '';
+            const priority = document.querySelector('.priority-badge.active')?.getAttribute('data-priority') || 'medium';
+            const template = document.getElementById('task-template')?.value || '';
+            
+            const newTask = {
+                id: tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1,
+                title,
+                description,
+                subject,
+                gradeLevel,
+                dueDate,
+                priority,
+                completed: false,
+                tags: template ? [template.toUpperCase()] : [subject || 'General']
+            };
+            
+            tasks.push(newTask);
+            renderTasks();
+            closeTaskModal();
+            
+            // Show success message
+            showNotification('Task added successfully!');
+        }
+
+        // Render tasks
+        function renderTasks() {
+            // Locate containers inside the current page container
+            const pageContainer = document.getElementById('page-container');
+            const recentContainer = pageContainer.querySelector('#recent-tasks');
+            const allContainer = pageContainer.querySelector('#all-tasks');
+
+            if (recentContainer) renderTaskList(recentContainer, tasks.slice(0, 5));
+            if (allContainer) renderTaskList(allContainer, tasks);
+        }
+
+        // Render a list of tasks
+        function renderTaskList(container, taskList) {
+            container.innerHTML = '';
+            
+            if (taskList.length === 0) {
+                container.innerHTML = '<p class="text-center">No tasks found. Add a new task to get started!</p>';
+                return;
+            }
+            
+            taskList.forEach(task => {
+                const taskCard = createTaskCard(task);
+                container.appendChild(taskCard);
+            });
+        }
+
+        // Create a task card element
+        function createTaskCard(task) {
+            const card = document.createElement('div');
+            card.className = `task-card ${task.priority}-priority`;
+            card.setAttribute('data-task-id', task.id);
+            
+            const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+            const dueDateStr = dueDate ? dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'No due date';
+            
+            card.innerHTML = `
+                <div class="task-header">
+                    <div>
+                        <h4 class="task-title">${task.title}</h4>
+                        <div class="task-meta">
+                            <span>Due: ${dueDateStr}</span>
+                            ${task.tags.map(tag => `<span class="task-tag">${tag}</span>`).join('')}
+                        </div>
+                        ${task.description ? `<p>${task.description}</p>` : ''}
+                    </div>
+                    <div class="task-actions">
+                        <button class="task-action focus" title="Focus on this task">🔍</button>
+                        <button class="task-action complete" title="Mark as complete">✓</button>
+                        <button class="task-action delete" title="Delete task">🗑️</button>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners to action buttons
+            const focusBtn = card.querySelector('.task-action.focus');
+            const completeBtn = card.querySelector('.task-action.complete');
+            const deleteBtn = card.querySelector('.task-action.delete');
+            
+            focusBtn.addEventListener('click', () => enterFocusMode(task));
+            completeBtn.addEventListener('click', () => completeTask(task.id));
+            deleteBtn.addEventListener('click', () => deleteTask(task.id));
+            
+            return card;
+        }
+
+        // Enter focus mode for a task
+        function enterFocusMode(task) {
+            focusTaskTitle.textContent = task.title;
+            focusTaskDescription.textContent = task.description || 'No description provided.';
+            focusMode.setAttribute('data-task-id', task.id);
+            focusMode.classList.add('active');
+        }
+
+        // Complete a task
+        function completeTask(taskId) {
+            tasks = tasks.map(task => {
+                if (task.id === taskId) {
+                    return { ...task, completed: true };
+                }
+                return task;
+            });
+            
+            renderTasks();
+            showNotification('Task completed!');
+        }
+
+        // Delete a task
+        function deleteTask(taskId) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                tasks = tasks.filter(task => task.id !== taskId);
+                renderTasks();
+                showNotification('Task deleted successfully!');
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--primary-navy);
+                color: white;
+                padding: var(--space-md) var(--space-lg);
+                border-radius: var(--radius-md);
+                box-shadow: 0 4px 12px var(--shadow-dark);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+            
+            // Add CSS for animations if not already present
+            if (!document.querySelector('#notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+    </script>
+</body>
+</html>

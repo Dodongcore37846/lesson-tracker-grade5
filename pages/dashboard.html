@@ -1,0 +1,140 @@
+<!-- Dashboard page content (loaded into index.html) -->
+<section id="dashboard-content" class="page-content">
+    <div class="dashboard">
+        <!-- Today's Schedule Widget -->
+        <div class="widget">
+            <div class="widget-header">
+                <h3 class="widget-title">Today's Schedule</h3>
+                <div class="widget-actions">
+                    <button class="widget-action">⋮</button>
+                </div>
+            </div>
+            <div class="widget-body">
+                <div class="task-card">
+                    <div class="task-header">
+                        <div>
+                            <h4 class="task-title">Grade 6 Science Class</h4>
+                            <div class="task-meta">
+                                <span>8:00 AM - 9:30 AM</span>
+                                <span class="task-tag">Teaching</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-card">
+                    <div class="task-header">
+                        <div>
+                            <h4 class="task-title">LAC Session</h4>
+                            <div class="task-meta">
+                                <span>1:00 PM - 3:00 PM</span>
+                                <span class="task-tag">Meeting</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Deadlines Widget -->
+        <div class="widget">
+            <div class="widget-header">
+                <h3 class="widget-title">Upcoming Deadlines</h3>
+                <div class="widget-actions">
+                    <button class="widget-action">⋮</button>
+                </div>
+            </div>
+            <div class="widget-body">
+                <div class="task-card high-priority">
+                    <div class="task-header">
+                        <div>
+                            <h4 class="task-title">Submit IPCRF</h4>
+                            <div class="task-meta">
+                                <span>Due: Tomorrow</span>
+                                <span class="task-tag">Administrative</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-card medium-priority">
+                    <div class="task-header">
+                        <div>
+                            <h4 class="task-title">Prepare Quarterly Exam</h4>
+                            <div class="task-meta">
+                                <span>Due: Next Week</span>
+                                <span class="task-tag">Teaching</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Priority Tasks Widget -->
+        <div class="widget">
+            <div class="widget-header">
+                <h3 class="widget-title">Priority Tasks</h3>
+                <div class="widget-actions">
+                    <button class="widget-action">⋮</button>
+                </div>
+            </div>
+            <div class="widget-body">
+                <div class="task-card high-priority">
+                    <div class="task-header">
+                        <div>
+                            <h4 class="task-title">Complete SF2 Forms</h4>
+                            <div class="task-meta">
+                                <span>Due: Friday</span>
+                                <span class="task-tag">Administrative</span>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="task-action complete">✓</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-card medium-priority">
+                    <div class="task-header">
+                        <div>
+                            <h4 class="task-title">Prepare Science Lesson</h4>
+                            <div class="task-meta">
+                                <span>Due: Tomorrow</span>
+                                <span class="task-tag">Teaching</span>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="task-action complete">✓</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Notes Widget -->
+        <div class="widget">
+            <div class="widget-header">
+                <h3 class="widget-title">Quick Notes</h3>
+                <div class="widget-actions">
+                    <button class="widget-action">+</button>
+                </div>
+            </div>
+            <div class="widget-body">
+                <textarea class="form-input form-textarea" placeholder="Jot down quick notes..."></textarea>
+                <div class="form-actions mt-md">
+                    <button class="btn btn-primary">Save Note</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="widget">
+        <div class="widget-header">
+            <h3 class="widget-title">Recent Tasks</h3>
+            <div class="widget-actions">
+                <button class="widget-action" id="add-task-btn">+ Add Task</button>
+            </div>
+        </div>
+        <div class="widget-body" id="recent-tasks">
+            <!-- Task cards will be dynamically added here -->
+        </div>
+    </div>
+</section>

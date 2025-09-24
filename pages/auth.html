@@ -1,0 +1,71 @@
+<!-- Auth page: Sign In / Sign Up -->
+<section id="auth-page" class="page-content" style="max-width:700px;margin:4rem auto;padding:2rem;">
+  <div class="widget">
+    <div class="widget-header">
+      <h3 class="widget-title">Welcome to GuroPlan</h3>
+    </div>
+    <div class="widget-body">
+        <div>
+          <!-- Sign In panel (visible by default) -->
+          <div id="signin-panel">
+            <h4>Sign In</h4>
+            <form id="signin-form">
+              <div class="form-group">
+                <label class="form-label" for="signin-email">Email</label>
+                <input id="signin-email" type="email" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="signin-password">Password</label>
+                <input id="signin-password" type="password" class="form-input" required>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Sign In</button>
+              </div>
+            </form>
+            <p class="mt-md">Don't have an account? <a href="#" id="show-signup">Create an account</a></p>
+          </div>
+
+          <!-- Sign Up panel (hidden by default) -->
+          <div id="signup-panel" class="hidden">
+            <h4>Create an account</h4>
+            <form id="signup-form">
+              <div class="form-group">
+                <label class="form-label" for="signup-name">Full Name</label>
+                <input id="signup-name" type="text" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="signup-grade">Grade Level Taught</label>
+                <select id="signup-grade" class="form-select" required>
+                  <option value="">Select Grade Level</option>
+                  <option value="kinder">Kindergarten</option>
+                  <option value="grade1">Grade 1</option>
+                  <option value="grade2">Grade 2</option>
+                  <option value="grade3">Grade 3</option>
+                  <option value="grade4">Grade 4</option>
+                  <option value="grade5">Grade 5</option>
+                  <option value="grade6">Grade 6</option>
+                  <option value="grade7">Grade 7</option>
+                  <option value="grade8">Grade 8</option>
+                  <option value="grade9">Grade 9</option>
+                  <option value="grade10">Grade 10</option>
+                  <option value="grade11">Grade 11</option>
+                  <option value="grade12">Grade 12</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="signup-email">Email</label>
+                <input id="signup-email" type="email" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="signup-password">Password</label>
+                <input id="signup-password" type="password" class="form-input" required>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-secondary">Sign Up</button>
+              </div>
+            </form>
+            <p class="mt-md">Already have an account? <a href="#" id="show-signin">Sign in</a></p>
+          </div>
+        </div>
+      </div>
+  </div>
