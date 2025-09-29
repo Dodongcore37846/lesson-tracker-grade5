@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson Tracker</title>
+    <title>Lesson Tracker 2030</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -645,29 +645,13 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="week">Week</label>
-                        <select class="form-control" id="week" required>
-                            <option value="">Select Week</option>
-                            <option value="1">Week 1</option>
-                            <option value="2">Week 2</option>
-                            <option value="3">Week 3</option>
-                            <option value="4">Week 4</option>
-                            <option value="5">Week 5</option>
-                            <option value="6">Week 6</option>
-                            <option value="7">Week 7</option>
-                            <option value="8">Week 8</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="day">Day</label>
-                        <select class="form-control" id="day" required>
-                            <option value="">Select Day</option>
-                            <option value="1">Day 1</option>
-                            <option value="2">Day 2</option>
-                            <option value="3">Day 3</option>
-                            <option value="4">Day 4</option>
-                            <option value="5">Day 5</option>
+                        <label for="quarter">Quarter</label>
+                        <select class="form-control" id="quarter" required>
+                            <option value="">Select Quarter</option>
+                            <option value="1">Quarter 1</option>
+                            <option value="2">Quarter 2</option>
+                            <option value="3">Quarter 3</option>
+                            <option value="4">Quarter 4</option>
                         </select>
                     </div>
                     
@@ -735,17 +719,13 @@
                 </div>
                 
                 <div>
-                    <label for="filter-week">Week:</label>
-                    <select id="filter-week">
-                        <option value="all">All Weeks</option>
-                        <option value="1">Week 1</option>
-                        <option value="2">Week 2</option>
-                        <option value="3">Week 3</option>
-                        <option value="4">Week 4</option>
-                        <option value="5">Week 5</option>
-                        <option value="6">Week 6</option>
-                        <option value="7">Week 7</option>
-                        <option value="8">Week 8</option>
+                    <label for="filter-quarter">Quarter:</label>
+                    <select id="filter-quarter">
+                        <option value="all">All Quarters</option>
+                        <option value="1">Quarter 1</option>
+                        <option value="2">Quarter 2</option>
+                        <option value="3">Quarter 3</option>
+                        <option value="4">Quarter 4</option>
                     </select>
                 </div>
                 
@@ -781,8 +761,7 @@
                 <thead>
                     <tr>
                         <th>Subject</th>
-                        <th>Week</th>
-                        <th>Day</th>
+                        <th>Quarter</th>
                         <th>Topic</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -847,7 +826,7 @@
             const resetBtn = document.getElementById('reset-btn');
             const saveIndicator = document.getElementById('save-indicator');
             const filterSubject = document.getElementById('filter-subject');
-            const filterWeek = document.getElementById('filter-week');
+            const filterQuarter = document.getElementById('filter-quarter');
             const filterStatus = document.getElementById('filter-status');
             const searchInput = document.getElementById('search');
             const applyFilters = document.getElementById('apply-filters');
@@ -865,133 +844,288 @@
             const confirmationMessage = document.getElementById('confirmation-message');
             const modalCloseBtn = document.querySelector('.modal-close');
             const subjectSelect = document.getElementById('subject');
-            const weekSelect = document.getElementById('week');
-            const daySelect = document.getElementById('day');
+            const quarterSelect = document.getElementById('quarter');
             const topicSelect = document.getElementById('topic');
             
             let lessons = [];
             let currentFilters = {
                 subject: 'all',
-                week: 'all',
+                quarter: 'all',
                 status: 'all',
                 search: ''
             };
             let pendingAction = null;
             
-            // MATATAG Grade 5 Curriculum Topics (Simplified example data; expand as needed)
+            // MATATAG Grade 5 Curriculum Topics (based on extracted data)
             const curriculumTopics = {
                 english: {
-                    1: { // Week 1
-                        1: 'Using Complex Sentences to Show Cause and Effect',
-                        2: 'Using Compound Sentences to Show Problem-Solution Relationship of Ideas',
-                        3: 'Using Compound Sentences to Show Cause-Effect Relationship of Ideas',
-                        4: 'Using Prepositions in, on, at, and by',
-                        5: 'Recognizing Adverbs of Manner and Frequency'
-                    },
-                    2: { // Week 2
-                        1: 'Composing Clear and Coherent Sentences Using Adverbs of Frequency and Manner',
-                        2: 'Filling-out Forms Accurately and Efficiently (school forms)',
-                        3: 'Planning a Composition Using an Outline/Other Graphic Organizers',
-                        4: 'Revising Writing for Clarity -appropriate punctuation marks -transition/signal words',
-                        5: 'Reading Texts with Appropriate Speed, Accuracy, and Proper Expression'
-                    },
-                    // Add more weeks...
+                    1: [
+                        'EN5LR-I-1 Comprehend literary texts - Noting important elements (story grammar) - Sequencing at least 7 events - Identifying type of plot: sequential - Analyzing sound devices - Onomatopoeia - Alliteration - Assonance - Consonance - Analyzing figures of speech to get and clarify meaning - Simile - Metaphor - Personification - Inferring: character’s feelings and traits - Making predictions: character’s possible decision/action - Drawing conclusions - Identifying the main idea - Summarizing story events - Applying the important story elements to one’s schema: evaluating possibility of an event happening in real life',
+                        'EN5LR-I-2 Comprehend informational texts - Noting important information through outlining (topic, main idea, supporting details): deductive organization (inverted pyramid) - Identifying text types - Explanation - News report - Identifying author’s purpose - Entertain - Inform, explain, describe - Drawing conclusions - Making generalizations - Making a summary - Distinguishing fact from opinion (statements of facts, opinions, and fact-based statements of opinion)',
+                        'EN5SW-I-1 Use words with literal (denotative) and implied (connotative) meanings in sentences - Using context clues: analogy - Using structural analysis - Suffixes: verb-forming suffixes - Using general references (print and online): dictionary',
+                        'EN5SW-I-2 Use tone and mood appropriately for one’s purpose, context, and target audience: formal',
+                        'EN5SW-I-3 Compose appropriate sentences for clarity and coherence - Using subject-verb agreement - Kinds of nouns: collective, concrete, abstract - Subject pronouns: demonstrative, relative - Using kinds of verbs - Helping - Linking (and sense) - Transitive - Using tenses of verbs - Progressive: present, past, future - Using adjectives: series (determiner, quantity, quality, size, shape, color) - Using adverbs: manner - Composing compound-complex sentences',
+                        'EN5SW-I-4 Produce text with introduction, body, and conclusion in conveying ideas: giving relevant information on a given topic',
+                        'EN5SW-I-5 Express ideas appropriately (age-appropriate, gender-responsive, culture-sensitive) for one’s purpose, context, and target audience - Using text types - Narrative - Explanation - News report - Using friendly letters (e.g., excuse, invitation, gratitude, etc.)',
+                        'EN5SW-I-6 Use appropriate non-verbal cues for clarity of context, purpose, and meaning - Using facial expressions - Using gestures - Using eye contact - Using haptics - Using posture - Using proxemics and blocking',
+                        'EN5SW-I-7 Fill out forms accurately - Personal data forms - School forms',
+                        'EN5VR-I-1 Identify visual elements: using layout (margin, grid, header, slide bar)',
+                        'EN5VR-I-2 Derive meaning based on the visual elements - Interpreting tone and mood (colors, space, layout, directionality) - Identifying the purpose of the visual text - Analyzing how visual elements contribute to the meaning of a text - Interpreting images/ideas'
+                    ],
+                    2: [
+                        'The learners demonstrate their expanding vocabulary knowledge as used in formal and informal situations; growing knowledge of grammatical structures; literal, inferential, and critical comprehension of literary and informational texts; and developing skills in composing and creating text in order to produce culture-appropriate texts based on their purpose, context, and target audience.',
+                        'The learners apply literal, inferential, and critical comprehension of literary and informational texts and produce culture-appropriate texts: narrative and expository texts (explanation, news report) based on their purpose, context (national holidays), and target audience using simple, compound, and complex sentences, and age-appropriate and gender-sensitive language.'
+                    ],
+                    3: [
+                        'Placeholder for Quarter 3 - Add competencies here'
+                    ],
+                    4: [
+                        'Placeholder for Quarter 4 - Add competencies here'
+                    ]
                 },
                 math: {
-                    1: {
-                        1: 'Visualizing Numbers up to 10 000 000 with Emphasis on Numbers 100 001 – 10 000 000',
-                        2: 'Reading and Writing Numbers up to 10 000 000 in Numerals and in Words',
-                        3: 'Rounding Numbers to the Nearest Hundred Thousand',
-                        4: 'Comparing Numbers up to 10 000 000 Using Relation Symbols',
-                        5: 'Ordering Numbers up to 10 000 000 in Increasing or Decreasing Order'
-                    },
-                    // Add more...
+                    1: [
+                        'Describe a 12- and 24-hour clock system.',
+                        'Convert 12-hour time to 24-hour time, and vice-versa.',
+                        'Solve problems involving 12- and 24-hour time.',
+                        'Compare the time in different world time zones to the time in the Philippines using a world time zone map.',
+                        'Solve problems on comparing the time in different world time zones to the time in the Philippines.',
+                        'Identify the height of a parallelogram, triangle, and trapezoid, in different orientations.',
+                        'Find the area of a parallelogram, triangle, and trapezoid, in sq. cm or sq. m, using formulas.',
+                        'Estimate the areas of triangles and quadrilaterals (parallelogram, rhombus, trapezoid) using grids.',
+                        'Perform three or more different different operations by applying the GMDAS rules.',
+                        'Multiply fractions using models.',
+                        'Multiply a fraction by a fraction.',
+                        'Solve multi-step problems involving multiplication of fractions that may or may not also involve addition or subtraction of fractions.'
+                    ],
+                    2: [
+                        'Divide fractions using models.',
+                        'Divide a fraction by a fraction.',
+                        'Solve multi-step problems involving division of fractions that may or may not involve the other operations with fractions.',
+                        'Determine: The place value to thousandths of a digit in a given decimal number. The value of a digit. The digit of a number, given its place value.',
+                        'Read and write decimal numbers with decimal parts to thousandths.',
+                        'Convert terminating decimals to fractions, and vice-versa.',
+                        'Compare and order decimal numbers with decimal parts to thousandths.',
+                        'Round decimal numbers to the nearest thousandths.',
+                        'Add and subtract decimal numbers with decimal parts of up to 3 decimal places.',
+                        'Solve multi-step problems involving addition and/or subtraction of decimals, including problems involving money.',
+                        'Use divisibility rules to find common factors of numbers: Divisibility rules for 2, 5, and 10. Divisibility rules for 3, 6, and 9. Divisibility rules for 4, 8, 11, and 12.',
+                        'Distinguish prime numbers from composite numbers using the Sieve of Eratosthenes.'
+                    ],
+                    3: [
+                        'Collect bivariate data from interview, questionnaire, and other appropriate sources.',
+                        'Identify the appropriate graph (bar graph or line graph) to represent a given set of data.',
+                        'Construct double bar graphs and double line graphs.',
+                        'Interpret data presented in a double bar graph or a double line graph.',
+                        'Draw conclusions or make inferences based on data presented in a double bar graph or a double line graph.',
+                        'Solve problems using data presented in a double bar graph or a double line graph.',
+                        'Describe probability as a measure of the chance of an event occurring.',
+                        'Calculate the theoretical probability of a simple event by listing all possible outcomes.',
+                        'Estimate each of two decimal numbers to the nearest whole number to estimate their product.',
+                        'Multiply decimal numbers with decimal parts of up to 2 decimal places.',
+                        'Solve multi-step problems involving multiplication of decimals that may or may not also involve addition or subtraction of decimals, including problems involving money.'
+                    ],
+                    4: [
+                        'Placeholder for Quarter 4 - Add competencies here'
+                    ]
                 },
                 science: {
-                    1: {
-                        1: 'Using a Microscope',
-                        2: 'Identifying Parts of a Microscope and their Functions',
-                        3: 'Focusing Specimens on Low Power Objective',
-                        4: 'Preparing Materials for Microscope Use',
-                        5: 'Observing and Describing Changes in Materials Over Time'
-                    },
-                    // Add more...
+                    1: [
+                        'describe matter as anything that has mass and takes up space;',
+                        'identify that matter has (exists in) three states called solids, liquids, and gases;',
+                        'describe the properties of solids, liquids, and gases in terms of shape and volume: solids: definite shape and volume, liquids: no definite shape; definite volume, gases: no definite shape or volume;',
+                        'identify objects at home and in the classroom as solid, liquid, or gas;',
+                        'use measuring cylinders or beakers to measure volume using units, such as milliliters (mL), and liters (L);',
+                        'describe how changes in temperature cause matter to change in state, such as solid to liquid to gas;',
+                        'describe the steps of a simple science investigation: What is the problem? What materials do you need? What do you need to do? What have you found out/learned?;',
+                        'identify and appropriately use units in simple science activities, such as milligrams (mg), grams (g), kilograms (kg), and degrees centigrade (°C);',
+                        'plan simple scientific investigations in answering questions, such as “Do gases (like air) or liquids (like water) have mass?”, using appropriate simple science equipment, such as a balance, and a thermometer, with appropriate units.'
+                    ],
+                    2: [
+                        'identify from pictures and labeled diagrams the parts of the digestive system as mouth, gullet, stomach, small intestine, and large intestine, and describe how they work;',
+                        'identify from pictures and diagrams the parts of the respiratory system as the nose, windpipe, and lungs, and describe how they work;',
+                        'identify from pictures and labeled diagrams the parts of the female reproductive system as ovaries, uterus, and vagina and those of the male reproductive system as the prostate, testis, and penis and describe how they work;',
+                        'use a table to show how living things can be classified into groups based on similar characteristics: plants including flowering and non-flowering; animals including mammals, reptiles, insects, birds, fish, amphibians, amphibians, and reptiles; microorganisms including fungi and bacteria;',
+                        'identify which groups of animals reproduce by giving birth to live young, such as mammals, and which reproduce by laying eggs, such as birds and reptiles;',
+                        'compare the life cycles of mammals from birth to adulthood, birds from egg to a mature organism, and plants from seed to a young plant, and then to a mature plant;',
+                        'describe the purpose of specialized structures in plants, such as rhizomes, tubers, thorns, bulbs, and aerial roots;',
+                        'explain how some plants have adapted to unfavorable conditions in the environment, such as lack of rain or floods;',
+                        'use information from secondary sources to describe examples of how some animals have changed to better suit their environment, such as mimicry or camouflage.'
+                    ],
+                    3: [
+                        'Placeholder for Quarter 3 - Add competencies here'
+                    ],
+                    4: [
+                        'Placeholder for Quarter 4 - Add competencies here'
+                    ]
                 },
                 filipino: {
-                    1: {
-                        1: 'Pagkilala sa mga Salitang Magkasingkahulugan at Magkasalungat',
-                        2: 'Paggamit ng mga Salitang Magkasingkahulugan sa Pangungusap',
-                        3: 'Paggamit ng mga Salitang Magkasalungat sa Pangungusap',
-                        4: 'Pagbuo ng mga Pangungusap Gamit ang mga Salitang Nagpapahayag ng Opinyon',
-                        5: 'Pagbuo ng mga Pangungusap Gamit ang mga Salitang Nagpapahayag ng Katotohanan'
-                    },
-                    // Add more...
+                    1: [
+                        'Nauunawaan ang tekstong naratibo (alamat, pabula, pabula, parabula, anekdota): Napagsusunod-sunod ang mga pangyayaring hindi bababa sa anim. Nasusuri ang katangian at kilos ng tauhan. Nakikilala ang realidad at pantasya. Naibibigay ang natuklasang kaalaman sa teksto. Nakapagbibigay ng angkop na pamagat ng teksto.',
+                        'Natutukoy ang tayutay (onomatopeya) sa pagbibigay-kahulugan ng pahayag sa binasa o napakinggang teksto.',
+                        'Naiuugnay ang kaisipan ng akda sa sariling karanasan.',
+                        'Nauunawaan ang tekstong impormatibo (pag-iisa at paglalarawan): Natutukoy ang mahahalagang impormasyon ng teksto. Nakikilala ang paksa, pangunahin, at mga pansuportang detalye. Nakapagbibigay ng sariling reaksiyon.',
+                        'Nasusuri ang layon ng teksto: magsalaysay (alamat, pabula, pabula, parabula, anekdota) at maglahad (pag-iisa-isa at paglalarawan).',
+                        'Nagagamit ang mga salitang may denotasyon at konotasyong kahulugan sa pagbuo ng pangungusap: Panandang konteksto: kasingkahulugan, kasalungat, pagbibigay ng halimbawa. Tayutay: onomatopeya.',
+                        'Nagagamit ang angkop na diksiyon (kaangkupan ng salita/retorika at estilo) sa pagpapahayag ayon sa: Layon (magsalaysay at maglahad). Kahulugan. Tagapakinig/tagapanood/mambabasa. Konteksto (salusalo at kaarawan). Tono at damdamin.',
+                        'Nakabubuo ng pahayag gamit ang hugnayang pangungusap.',
+                        'Nagagamit ang mga bahagi ng panalita sa pagpapahayag: Gamit ng mga panlapi: unlapi, gitlapi, hulapi, kabilaan. Pangatnig: nag-uugnay ng magkatimbang, nag-uugnay ng di-magkatimbang. Pangngalan: uri (pantangi, pambalana: tahas/kongkreto, basal/di-kongkreto, lansakan), kayarian (payak at maylapi). Panghalip panao. Pang-uring panlarawan: kayarian (payak at maylapi). Pang-abay: pamanahon, panlunan.',
+                        'Nagagamit ang pangkalahatang kayarian ng teksto sa pagbuo ng diskurso: nagsasalaysay (alamat, pabula, parabula, at anekdota), naglalahad (pag-iisa-isa at paglalarawan).',
+                        'Nakabubuo ng tekstong may mga panandang nag-uugnay ng mga ideya ayon sa layon, kahulugan, tagapakinig/mambabasa, at konteksto: Tekstong naratibo (alamat, pabula, parabula, at anekdota). Tekstong impormatibo (pag-iisa-isa, paglalarawan).',
+                        'Nagagamit ang angkop na wika sa pagpapahayag na isinasaalang-alang ang edad, kasarian, paksa, at kultura sa iba’t ibang sitwasyon: pakikipag-usap sa kasapi ng pamilya (pagpapaalam, pag-utos, paghingi ng paumanhin, pagsali sa usapan ng may edad).'
+                    ],
+                    2: [
+                        'Placeholder for Quarter 2 - Add competencies here'
+                    ],
+                    3: [
+                        'Placeholder for Quarter 3 - Add competencies here'
+                    ],
+                    4: [
+                        'Placeholder for Quarter 4 - Add competencies here'
+                    ]
                 },
                 ap: {
-                    1: {
-                        1: 'Mga Hamon sa Buhay at Paano Ito Malalampasan',
-                        2: 'Mga Hakbang sa Paglutas ng Suliranin',
-                        3: 'Pagkakaiba ng Pangangailangan at Kagustuhan',
-                        4: 'Mga Yamang Likas ng Pilipinas',
-                        5: 'Mga Yamang Tao ng Pilipinas'
-                    },
-                    // Add more...
+                    1: [
+                        'Naipaliliwanag ang pag-aaral ng kasaysayan at mga batayan nito.',
+                        'Natatalakay ang mga pamamaraan at pananaw ng kasaysayan.',
+                        'Natutukoy ang pinagmulan ng Pilipinas batay sa agham, kaalamang bayan, at relihiyon.',
+                        'Nasusuri ang pinagmulan ng sinaunang tao sa Pilipinas batay sa agham at kaalamang bayan.',
+                        'Nasusuri ang kaugnayan ng lokasyon sa paghubog ng kasaysayan.',
+                        'Nasusuri ang mga sinaunang bayang Pilipino batay sa organisasyong panlipunan, pang-ekonomiya, at pampolitika.',
+                        'Napahahalagahan ang ginampanan ng kababaihan sa pagbuo ng kalinangan ng sinaunang Pilipino.'
+                    ],
+                    2: [
+                        'Naipaliliwanag ang konsepto ng kalinangan at uri nito.',
+                        'Nasusuri ang mga paniniwala, relihiyon, at tradisyon ng sinaunang bayang Pilipino.',
+                        'Natatalakay ang iba’t ibang uri ng sinaunang sining, pagpapalamuti at arkitektura ng mga Pilipino.',
+                        'Natatalakay ang pagdating at paglaganap ng Islam.',
+                        'Nasusuri ang mga katuruan ng Islam at pamahalaang sultanato.',
+                        'Napahahalagahan ang ugnayan ng sinaunang bayang Pilipino sa ilang piling bansa sa Asya.'
+                    ],
+                    3: [
+                        'Placeholder for Quarter 3 - Add competencies here'
+                    ],
+                    4: [
+                        'Placeholder for Quarter 4 - Add competencies here'
+                    ]
                 },
                 epp: {
-                    1: {
-                        1: 'Kahalagahan ng Agrikultura',
-                        2: 'Mga Halimbawa ng Produktong Agrikultural',
-                        3: 'Pangangalaga sa Halaman at Hayop',
-                        4: 'Paggamit ng Teknolohiya sa Agrikultura',
-                        5: 'Sustainability sa Pagsasaka'
-                    },
-                    // Add more...
+                    1: [
+                        'natatalakay ang mga panuntunan ng netiquette sa paggamit ng Internet',
+                        'nakikilala ang mga uri ng web browser at mga bahagi nito',
+                        'nagagamit ang search engine sa ligtas at responsableng pamamaraan',
+                        'nakapagpapadala ng mensahe gamit ang E-Mail sa ligtas at responsableng pamamaraan',
+                        'nakagagawa ng word document na may images, shapes, smartarts, tables at page background',
+                        'nakagagawa ng slide presentation na may animation, transition, audio, at video',
+                        'nakagagawa ng desktop publishing document gamit ang page design, layout, at building block',
+                        'nakagagawa ng spreadsheet na may basic functions',
+                        'nakikila ang user interface ng Block Coding',
+                        'nagagamit ang events, motion, sound, looks, at backdrops block codes'
+                    ],
+                    2: [
+                        'natatalakay ang kahulugan ng animal production at mga sangay nito',
+                        'natatalakay ang kahalagahan at kabutihang dulot sa pag-aalaga ng poultry animals sa natural na pamamaraan',
+                        'naipaliliwanag ang mga piling batas, lokal na ordinansa, at mga ahensya ng gobyerno at non-government organization (NGOs), at serbisyong naibibigay sa pag-aalaga ng poultry animals',
+                        'nakikilala ang mga tao sa pamayanan/buong bansa na nagtagumpay sa pag-aalaga ng poultry animals at ang mga katangiang taglay nila',
+                        'natatalakay ang mga salik na dapat isaalang-alang sa sa pag-aalaga ng poultry animals sa natural na paraan',
+                        'natatalakay ang mga karaniwang uri at lahi ng poultry animals na makikita sa pamayanan na maaaring alagaan',
+                        'natatalakay ang mga karaniwang sakit, sanhi, palatandaan, pamaraan sa pag iwas at panlunas sa mga sakit ng poultry animals',
+                        'naisasagawa ang pag-aalaga at pangangasiwa ng poultry animals sa natural na pamamaraan',
+                        'natatalakay ang pag-aani ng alagang poultry animals at mga produkto nito',
+                        'nakapagbebenta ng mga inaning poultry animals at produkto nito',
+                        'naisasagawa ang pagtutuos ng kita mula sa napagbentahan/kabuuang benta, kabuuang gastos, at tubo o kita gamit ang manual na pagtutuos o productivity tools'
+                    ],
+                    3: [
+                        'Discuss the different features of a residential floor plan with plumbing layout (walls, doors, fixtures, signs and symbols, plumbing system diagram (isometric), dimensioning - elements, systems, methods).',
+                        'Draft the floor plan with the plumbing layout.',
+                        'Draft the fixtures, signs, and symbols on the floor plan with plumbing layout & its diagram.',
+                        'Label the floor plan with plumbing layout and its diagram with dimensions.'
+                    ],
+                    4: [
+                        'Discuss the handling and storing of consumables (joints, fittings, fixtures, adhesive, de-clogger, sealants).',
+                        'Demonstrate the use of hand tools and equipment following the safety precautions (cutting, reaming, threading, de-clogger).',
+                        'Demonstrate the maintenance of hand tools following the safety precautions (storage, care).',
+                        'Apply procedures in pipe installation with safety precautions (specification, measurement, and design, pipe joining and fitting method).',
+                        'Apply procedures in testing pipe installation with safety precautions.',
+                        'Apply procedures in pipeline testing and troubleshooting following the safety precautions (types of troubles, types of tests - leak test, system test, pressure test).',
+                        'Apply procedures in pipeline repair following the safety precautions.',
+                        'Compute repair service cost (material costing, manpower/labor costing).'
+                    ]
                 },
                 gmrc: {
-                    1: {
-                        1: 'Pagkilala sa Sarili at Emosyon',
-                        2: 'Pagpapahalaga sa Pamilya',
-                        3: 'Paggalang sa Kapwa',
-                        4: 'Responsibilidad sa Paaralan',
-                        5: 'Pagiging Matapat'
-                    },
-                    // Add more...
+                    1: [
+                        'Naisasabuhay ang pagpapahalaga sa sarili sa pamamagitan ng pagbibigay-halaga sa mga sariling kakayahan na wala sa ibang nilalang (hal. kakayahang magpasiya, umunawa ng damdamin ng iba).',
+                        'Nakapagsasanay sa pagiging matapat sa pamamagitan ng angkop na paglalahad ng tunay na saloobin sa mga kasapi ng pamilya.',
+                        'Naisasabuhay ang pagiging magalang sa pamamagitan ng pakikilahok sa mga gawain na kumikilala sa karapatan ng kapuwa-bata.',
+                        'Naipakikita ang pananalig sa Diyos sa pamamagitan ng mga paraan ng pagsamba at pagsunod sa mga tagubilin ng kinabibilangang pananampalataya.',
+                        'Naipakikita ang pagiging mapanagutan sa pamamagitan ng paglahok sa mga gawaing pangangalaga at pagpaparami ng mga puno at halaman.',
+                        'Nakapagsasanay ng pagmamahal sa bayan sa pamamagitan ng mga gawain na nagtatampok sa mga Pilipinong nagsasabuhay ng mabuting kaugalian.'
+                    ],
+                    2: [
+                        'Naisasabuhay ang tiwala sa sarili sa pamamagitan ng paglahok sa mga programang pampaaralan na nagpapaunlad ng mga kakayahan, talento at hilig na ng may paggabay ng pamilya.',
+                        'Nakapagsasanay ng pagiging matiyaga sa pamamagitan ng palagiang paggawa ng mga gawain g bukas sa mungkahi ng miyembro ng pamilya.',
+                        'Nakapagsasanay sa pagiging mapagpasensiya sa pamamagitan ng angkop na pananalita at pagtugon sa kapuwa nang may pagsasaalang-alang sa damdamin ng kapuwa.',
+                        'Naipakikita ang pagiging masunurin sa pamamagitan ng mapagkalingang pakikitungo sa mga kasapi ng pamilya.',
+                        'Napagsisikap sa pagiging mabuting katiwala sa pamamagitan ng paglahok sa mga gawaing ng pamilya na nagpapanatili ng kalinisan ng tubig.',
+                        'Nakapgsasanay sa pagmamahal sa bayan sa pamamagitan ng pagtugon sa pagpapatatag ng mga gawi sa pamilya ayon sa kaugaliang Pilipino.'
+                    ],
+                    3: [
+                        'Nakapgsasanay sa pagiging matipid sa pamamagitan ng pagtatabi ng mga bahagi ng baong pera/allowance o gamit na ayon sa kakayahan na maaaring makatulong sa sarili o kapuwa sa panahon ng pangangailangan.',
+                        'Naisasabuhay ang pagiging mapagmalasakit sa pamamagitan ng pakikiisa sa pamilya sa pagtugon sa pangangailangan ng kapuwa.',
+                        'Naisasabuhay ang pagiging magalang sa kapuwa sa pamamagitan ng pantay-pantay na pakikipag-ugnayan sa kabila ng pagkakaiba-iba (hal. walang pagtatangi sa kapuwa anuman ang kaniyang estado sa buhay).',
+                        'Nakapgsasanay sa pagiging mapagpakumbaba sa pamamagitan ng regular na pananalangin, kusang pag-amin sa mga nagawang kam.'
+                    ],
+                    4: [
+                        'Placeholder for Quarter 4 - Add competencies here'
+                    ]
                 },
                 mapeh: {
-                    1: {
-                        1: 'Music: Rhythm and Melody',
-                        2: 'Arts: Basic Drawing Techniques',
-                        3: 'PE: Physical Fitness Activities',
-                        4: 'Health: Personal Hygiene',
-                        5: 'Integrated MAPEH Project'
-                    },
-                    // Add more...
+                    1: [
+                        'discuss the basic concepts and principles of sound, theater, dance, and visual elements based on the representations in the creative works of their province;',
+                        'describe concepts and ideas about their cultural identity based on the representations in the creative works of their province;',
+                        'explain relevant and/or unique local processes and practices in producing/performing creative works that reveal their cultural identity;',
+                        'use relevant and appropriate local processes and practices in producing/performing creative works that reveal their cultural identity.'
+                    ],
+                    2: [
+                        'discuss the basic concepts and principles of sound, theater, dance, and visual elements based on the representations of local creative works;',
+                        'relate their faiths and beliefs based on the representations of local creative works with basic concepts and principles of sound, theater, dance, and visual elements;',
+                        'compare the musical, theatrical, dance, and visual arts representations of local concepts (i.e., use of range of dynamics, use of colors and symbols) in relevant creative works based on the faiths and beliefs of the province;',
+                        'experiment with relevant, appropriate, and available local processes and practices in producing/performing creative works that reveal their faiths and beliefs;',
+                        'produce simple improvisations (timbre, dynamics, theatrical, dance, and visual) with faiths and beliefs as the theme.'
+                    ],
+                    3: [
+                        'discuss the use of the properties of sound, theatrical, dance, and visual elements as expressed in relevant creative works;',
+                        'relate stories/narratives as expressed in relevant creative works to properties of sound, theatrical, dance, and visual elements;',
+                        'determine cultural identity based on the concepts, processes, and practices in the Music, Theater, Dance, and Art of their respective provinces;',
+                        'produce a creative work about their personal story/identity in the community using appropriate local concepts, processes, and practices in Music, Theater, Dance, and Arts.'
+                    ],
+                    4: [
+                        'examine the properties of sound, theatrical, dance, visual elements, and design principles observed in selected sample creative works from their province;',
+                        'distinguish the unique musical, visual, dance, and theatrical concepts, processes, and practices in the creative works found in the cultural celebrations of their province/region;',
+                        'select appropriate practices, choice of themes, mediums, and concepts of celebrations found in their province/region for the production of their creative works;',
+                        'produce creative artworks based on the celebrations of their culture, province, region using available local concepts, processes, and practices, and beliefs as the theme.'
+                    ]
                 }
-                // Expand for all weeks (1-8) and days as per actual curriculum
             };
             
             // Function to populate topics based on selections
             function populateTopics() {
                 const subject = subjectSelect.value;
-                const week = weekSelect.value;
-                const day = daySelect.value;
+                const quarter = quarterSelect.value;
                 topicSelect.innerHTML = '<option value="">Select Topic</option>';
                 
-                if (subject && week && day && curriculumTopics[subject] && curriculumTopics[subject][week] && curriculumTopics[subject][week][day]) {
-                    const topic = curriculumTopics[subject][week][day];
-                    topicSelect.innerHTML += `<option value="${topic}">${topic}</option>`;
-                    // If more topics per day, add loops here
+                if (subject && quarter && curriculumTopics[subject] && curriculumTopics[subject][quarter]) {
+                    curriculumTopics[subject][quarter].forEach(topic => {
+                        topicSelect.innerHTML += `<option value="${topic}">${topic}</option>`;
+                    });
                 } else {
-                    topicSelect.innerHTML += '<option value="">No predefined topic - Enter custom</option>';
-                    // Allow custom input if no predefined
                     topicSelect.outerHTML = '<input type="text" class="form-control" id="topic" placeholder="Enter custom topic" required>';
                 }
             }
             
             // Event listeners for dynamic topic population
             subjectSelect.addEventListener('change', populateTopics);
-            weekSelect.addEventListener('change', populateTopics);
-            daySelect.addEventListener('change', populateTopics);
+            quarterSelect.addEventListener('change', populateTopics);
             
             // Load data from localStorage
             function loadData() {
@@ -1017,7 +1151,7 @@
             function showEmptyState() {
                 lessonData.innerHTML = `
                     <tr>
-                        <td colspan="6" class="empty-state">
+                        <td colspan="5" class="empty-state">
                             <i class="fas fa-inbox"></i>
                             <h3>No Lessons Yet</h3>
                             <p>Add using the form above.</p>
@@ -1101,7 +1235,7 @@
                 
                 let filteredLessons = lessons.filter(lesson => {
                     if (currentFilters.subject !== 'all' && lesson.subject !== currentFilters.subject) return false;
-                    if (currentFilters.week !== 'all' && lesson.week !== currentFilters.week) return false;
+                    if (currentFilters.quarter !== 'all' && lesson.quarter !== currentFilters.quarter) return false;
                     if (currentFilters.status !== 'all' && lesson.status !== currentFilters.status) return false;
                     if (currentFilters.search && !lesson.topic.toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
                     return true;
@@ -1110,7 +1244,7 @@
                 if (filteredLessons.length === 0) {
                     lessonData.innerHTML = `
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                            <td colspan="5" style="text-align: center; padding: 20px; color: var(--text-secondary);">
                                 No matching lessons. Adjust filters.
                             </td>
                         </tr>
@@ -1133,8 +1267,7 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${subjectMap[lesson.subject] || lesson.subject}</td>
-                        <td>Week ${lesson.week}</td>
-                        <td>Day ${lesson.day}</td>
+                        <td>Quarter ${lesson.quarter}</td>
                         <td>${lesson.topic}</td>
                         <td>
                             <span class="status-badge ${lesson.status === 'completed' ? 'status-completed' : 'status-pending'}">
@@ -1176,8 +1309,7 @@
                 if (!lesson) return;
                 
                 subjectSelect.value = lesson.subject;
-                weekSelect.value = lesson.week;
-                daySelect.value = lesson.day;
+                quarterSelect.value = lesson.quarter;
                 populateTopics(); // Repopulate topics
                 if (document.getElementById('topic').tagName === 'SELECT') {
                     topicSelect.value = lesson.topic;
@@ -1228,8 +1360,7 @@
                 e.preventDefault();
                 
                 const subject = subjectSelect.value;
-                const week = weekSelect.value;
-                const day = daySelect.value;
+                const quarter = quarterSelect.value;
                 const topicElement = document.getElementById('topic');
                 const topic = topicElement.value;
                 const status = document.getElementById('status').value;
@@ -1237,7 +1368,7 @@
                 const editId = editIdField.value;
                 
                 if (!editId) {
-                    const isDuplicate = lessons.some(l => l.subject === subject && l.week === week && l.day === day && l.topic === topic);
+                    const isDuplicate = lessons.some(l => l.subject === subject && l.quarter === quarter && l.topic === topic);
                     if (isDuplicate) {
                         showError('Duplicate lesson!');
                         return;
@@ -1246,8 +1377,7 @@
                 
                 const lessonData = {
                     subject,
-                    week,
-                    day,
+                    quarter,
                     topic,
                     status,
                     notes,
@@ -1281,9 +1411,9 @@
                 doc.setTextColor(100);
                 
                 let filtersText = 'All Lessons';
-                if (currentFilters.subject !== 'all' || currentFilters.week !== 'all' || currentFilters.status !== 'all' || currentFilters.search) {
+                if (currentFilters.subject !== 'all' || currentFilters.quarter !== 'all' || currentFilters.status !== 'all' || currentFilters.search) {
                     filtersText = 'Filtered Lessons' + (currentFilters.subject !== 'all' ? ` | Subject: ${filterSubject.options[filterSubject.selectedIndex].text}` : '') +
-                                  (currentFilters.week !== 'all' ? ` | Week: ${currentFilters.week}` : '') +
+                                  (currentFilters.quarter !== 'all' ? ` | Quarter: ${currentFilters.quarter}` : '') +
                                   (currentFilters.status !== 'all' ? ` | Status: ${currentFilters.status}` : '') +
                                   (currentFilters.search ? ` | Search: ${currentFilters.search}` : '');
                 }
@@ -1291,13 +1421,13 @@
                 
                 let filteredLessons = lessons.filter(lesson => {
                     if (currentFilters.subject !== 'all' && lesson.subject !== currentFilters.subject) return false;
-                    if (currentFilters.week !== 'all' && lesson.week !== currentFilters.week) return false;
+                    if (currentFilters.quarter !== 'all' && lesson.quarter !== currentFilters.quarter) return false;
                     if (currentFilters.status !== 'all' && lesson.status !== currentFilters.status) return false;
                     if (currentFilters.search && !lesson.topic.toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
                     return true;
                 });
                 
-                const tableColumn = ["Subject", "Week", "Day", "Topic", "Status"];
+                const tableColumn = ["Subject", "Quarter", "Topic", "Status"];
                 const tableRows = [];
                 const subjectMap = {
                     'english': 'English',
@@ -1313,8 +1443,7 @@
                 filteredLessons.forEach(lesson => {
                     tableRows.push([
                         subjectMap[lesson.subject],
-                        `Week ${lesson.week}`,
-                        `Day ${lesson.day}`,
+                        `Quarter ${lesson.quarter}`,
                         lesson.topic,
                         lesson.status.charAt(0).toUpperCase() + lesson.status.slice(1)
                     ]);
@@ -1345,7 +1474,7 @@
             // Filters
             applyFilters.addEventListener('click', () => {
                 currentFilters.subject = filterSubject.value;
-                currentFilters.week = filterWeek.value;
+                currentFilters.quarter = filterQuarter.value;
                 currentFilters.status = filterStatus.value;
                 currentFilters.search = searchInput.value;
                 renderTable();
@@ -1353,10 +1482,10 @@
             
             clearFilters.addEventListener('click', () => {
                 filterSubject.value = 'all';
-                filterWeek.value = 'all';
+                filterQuarter.value = 'all';
                 filterStatus.value = 'all';
                 searchInput.value = '';
-                currentFilters = { subject: 'all', week: 'all', status: 'all', search: '' };
+                currentFilters = { subject: 'all', quarter: 'all', status: 'all', search: '' };
                 renderTable();
             });
             
