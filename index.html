@@ -3,1552 +3,1001 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson Tracker 2030</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <title>Grade 5 Matatag Curriculum Lesson Tracker</title>
     <style>
-        :root {
-            --neon-blue: #00ffff;
-            --cyber-purple: #ff00ff;
-            --dark-bg: #0a0a2a;
-            --light-glow: #ffffff20;
-            --accent-green: #00ff9f;
-            --warning-orange: #ff9500;
-            --error-red: #ff4d4d;
-            --surface: rgba(255, 255, 255, 0.05);
-            --text-primary: #ffffff;
-            --text-secondary: #b3b3b3;
-            --border-glow: rgba(0, 255, 255, 0.3);
-            --shadow-glow: 0 0 20px rgba(0, 255, 255, 0.2);
-            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-            --transition: all 0.3s ease-in-out;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Orbitron', sans-serif;
-        }
-        
         body {
-            background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1a4a 100%);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            padding: 20px;
-            overflow-x: hidden;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
         }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: var(--surface);
-            border-radius: 20px;
-            box-shadow: var(--shadow-glow), var(--card-shadow);
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-glow);
-        }
-        
-        header {
-            background: linear-gradient(120deg, var(--neon-blue) 0%, var(--cyber-purple) 100%);
-            color: var(--text-primary);
-            padding: 30px;
-            text-align: center;
-            position: relative;
-            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
-        }
-        
-        .offline-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--light-glow);
-            padding: 8px 15px;
-            border-radius: 30px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            box-shadow: var(--shadow-glow);
-        }
-        
-        .offline-badge i {
-            margin-right: 8px;
-            color: var(--neon-blue);
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            animation: glow 2s infinite alternate;
-        }
-        
-        @keyframes glow {
-            from { text-shadow: 0 0 5px var(--neon-blue); }
-            to { text-shadow: 0 0 15px var(--neon-blue); }
-        }
-        
-        .logo i {
-            font-size: 40px;
-            margin-right: 20px;
-            color: var(--neon-blue);
-            text-shadow: 0 0 10px var(--neon-blue);
-        }
-        
         h1 {
-            font-size: 36px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .subtitle {
-            font-size: 18px;
-            opacity: 0.8;
-            font-family: 'Roboto', sans-serif;
-        }
-        
-        .storage-info {
-            background: var(--light-glow);
-            padding: 12px;
-            border-radius: 10px;
-            margin-top: 20px;
-            font-size: 16px;
-            box-shadow: var(--shadow-glow);
-        }
-        
-        .content-area {
-            padding: 30px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: var(--surface);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow), var(--shadow-glow);
             text-align: center;
-            border: 1px solid var(--border-glow);
-            transition: var(--transition);
+            color: #333;
         }
-        
-        .stat-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px var(--neon-blue);
+        h2 {
+            color: #4CAF50;
+            margin-top: 40px;
         }
-        
-        .stat-card.warning {
-            border-color: var(--warning-orange);
-        }
-        
-        .stat-card.accent {
-            border-color: var(--error-red);
-        }
-        
-        .stat-card.secondary {
-            border-color: var(--accent-green);
-        }
-        
-        .stat-value {
-            font-size: 28px;
-            font-weight: bold;
-            margin: 12px 0;
-            color: var(--neon-blue);
-        }
-        
-        .stat-label {
-            font-size: 16px;
-            color: var(--text-secondary);
-            font-family: 'Roboto', sans-serif;
-        }
-        
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 35px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: 1px;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 14px 18px;
-            border: 1px solid var(--border-glow);
-            border-radius: 8px;
-            font-size: 16px;
-            background: var(--surface);
-            color: var(--text-primary);
-            transition: var(--transition);
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 15px var(--neon-blue);
-        }
-        
-        .btn {
-            padding: 14px 24px;
-            color: var(--text-primary);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            margin-bottom: 12px;
-            background: linear-gradient(45deg, var(--neon-blue), var(--cyber-purple));
-            box-shadow: var(--shadow-glow);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .btn i {
-            margin-right: 10px;
-        }
-        
-        .btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 0 25px var(--neon-blue);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(45deg, var(--neon-blue), #00bfff);
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(45deg, var(--accent-green), #00ff00);
-        }
-        
-        .btn-accent {
-            background: linear-gradient(45deg, var(--error-red), #ff0000);
-        }
-        
-        .btn-warning {
-            background: linear-gradient(45deg, var(--warning-orange), #ffa500);
-        }
-        
-        .btn-pdf {
-            background: linear-gradient(45deg, #ff4d4d, #e60000);
-        }
-        
-        .btn-json {
-            background: linear-gradient(45deg, #9b59b6, #800080);
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 18px;
-            flex-wrap: wrap;
-            margin-bottom: 25px;
-        }
-        
-        .data-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 35px;
-            background: var(--surface);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow), var(--shadow-glow);
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        
-        .data-table th, .data-table td {
-            padding: 18px 24px;
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
             text-align: left;
-            border-bottom: 1px solid var(--border-glow);
         }
-        
-        .data-table th {
-            background: linear-gradient(90deg, var(--neon-blue) 0%, var(--cyber-purple) 100%);
-            color: var(--text-primary);
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-        
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .data-table tr:hover {
-            background: rgba(0, 255, 255, 0.1);
-            box-shadow: inset 0 0 10px var(--neon-blue);
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .action-btn {
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            transition: var(--transition);
-        }
-        
-        .edit-btn {
-            background: var(--warning-orange);
-            color: var(--text-primary);
-        }
-        
-        .delete-btn {
-            background: var(--error-red);
-            color: var(--text-primary);
-        }
-        
-        .action-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px currentColor;
-        }
-        
-        .footer {
+        th {
+            background-color: #4CAF50;
+            color: white;
             text-align: center;
-            margin-top: 35px;
-            color: var(--text-secondary);
-            font-size: 16px;
-            padding: 25px;
-            border-top: 1px solid var(--border-glow);
-            font-family: 'Roboto', sans-serif;
         }
-        
-        .save-indicator {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            padding: 14px 20px;
-            background: var(--accent-green);
-            color: var(--text-primary);
-            border-radius: 8px;
-            font-weight: 600;
-            box-shadow: var(--shadow-glow);
-            opacity: 0;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            display: flex;
-            align-items: center;
-            z-index: 1000;
-            transform: translateY(20px);
+        td.week {
+            font-weight: bold;
+            background-color: #e0f7fa;
+            text-align: center;
         }
-        
-        .save-indicator.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .save-indicator i {
-            margin-right: 10px;
-        }
-        
-        .filter-controls {
-            display: flex;
-            gap: 18px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        
-        .filter-controls select, .filter-controls input {
-            padding: 12px 18px;
-            border: 1px solid var(--border-glow);
-            border-radius: 8px;
-            font-size: 16px;
-            background: var(--surface);
-            color: var(--text-primary);
-        }
-        
-        .storage-status {
-            background: var(--surface);
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 25px;
-            border-left: 5px solid var(--neon-blue);
-            box-shadow: var(--shadow-glow);
-        }
-        
-        .import-export {
-            margin-top: 25px;
-            padding: 20px;
-            background: var(--surface);
-            border-radius: 12px;
-            border-left: 5px solid var(--cyber-purple);
-            box-shadow: var(--shadow-glow);
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
+        textarea {
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
+            height: 80px;
+            border: 1px solid #ccc;
+            resize: vertical;
         }
-        
-        .modal-content {
-            background: var(--surface);
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: var(--shadow-glow), var(--card-shadow);
-            border: 1px solid var(--border-glow);
+        input[type="checkbox"] {
+            margin-right: 5px;
         }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: var(--transition);
-        }
-        
-        .modal-close:hover {
-            color: var(--neon-blue);
-        }
-        
-        .confirmation-modal .btn {
-            margin-top: 25px;
-        }
-        
-        /* Print styles */
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-                color: black;
-            }
-            
-            .container {
-                box-shadow: none;
-                border-radius: 0;
-                background: white;
-            }
-            
-            header {
-                background: white !important;
-                color: black !important;
-                padding: 20px;
-                border-bottom: 2px solid #000;
-            }
-            
-            .offline-badge, .stats-grid, .form-grid, .form-actions, .footer, 
-            .filter-controls, .storage-status, .import-export, .action-buttons {
-                display: none !important;
-            }
-            
-            .content-area {
-                padding: 15px;
-            }
-            
-            .data-table {
-                box-shadow: none;
-                page-break-inside: avoid;
-            }
-            
-            .data-table th {
-                background-color: white !important;
-                color: black !important;
-                border-bottom: 2px solid black;
-            }
-            
-            .print-header {
-                text-align: center;
-                margin-bottom: 20px;
-            }
-            
-            .print-title {
-                font-size: 24px;
-                margin-bottom: 10px;
-                color: black;
-            }
-            
-            .print-subtitle {
-                font-size: 16px;
-                color: gray;
-                margin-bottom: 20px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .form-actions, .filter-controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .btn {
-                width: 100%;
-                margin-right: 0;
-            }
-            
-            .data-table {
-                display: block;
-                overflow-x: auto;
-            }
-            
-            .offline-badge {
-                position: relative;
-                top: 0;
-                right: 0;
-                margin: 10px auto;
-                width: fit-content;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-                gap: 5px;
-            }
-            
-            .action-btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            header {
-                padding: 15px;
-            }
-            
-            .logo {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .logo i {
-                margin-right: 0;
-                margin-bottom: 10px;
-            }
-        }
-        
-        .empty-state {
+        .completed {
             text-align: center;
-            padding: 50px 25px;
-            color: var(--text-secondary);
         }
-        
-        .empty-state i {
-            font-size: 80px;
-            margin-bottom: 20px;
-            opacity: 0.5;
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
         }
-        
-        .status-badge {
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 700;
+        .subject-selector {
+            text-align: center;
+            margin: 20px 0;
         }
-        
-        .status-completed {
-            background: rgba(0, 255, 159, 0.2);
-            color: var(--accent-green);
+        select {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            background-color: white;
+            cursor: pointer;
         }
-        
-        .status-pending {
-            background: rgba(255, 149, 0, 0.2);
-            color: var(--warning-orange);
+        .subject-section {
+            display: none;
+        }
+        .subject-section.active {
+            display: block;
+        }
+        .instructions {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+        .clear-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        .clear-btn:hover {
+            background-color: #da190b;
+        }
+        .save-message {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .save-message.show {
+            display: block;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .save-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="offline-badge">
-                <i class="fas fa-wifi-slash"></i> Works Offline
-            </div>
-            <div class="logo">
-                <i class="fas fa-book-open"></i>
-                <div>
-                    <h1>Lesson Tracker 2030</h1>
-                    <p class="subtitle">Grade 5 MATATAG Curriculum - Local Storage Powered</p>
-                </div>
-            </div>
-            <div class="storage-info">
-                <i class="fas fa-database"></i> Data Secured Locally in Browser
-            </div>
-        </header>
-        
-        <div class="content-area">
-            <div class="stats-grid" id="stats-container">
-                <!-- Stats will be populated by JavaScript -->
-            </div>
-            
-            <form id="lesson-form">
-                <input type="hidden" id="edit-id" value="">
-                
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="subject">Subject</label>
-                        <select class="form-control" id="subject" required>
-                            <option value="">Select Subject</option>
-                            <option value="english">English</option>
-                            <option value="math">Mathematics</option>
-                            <option value="science">Science</option>
-                            <option value="filipino">Filipino</option>
-                            <option value="ap">Araling Panlipunan</option>
-                            <option value="epp">EPP</option>
-                            <option value="gmrc">GMRC</option>
-                            <option value="mapeh">MAPEH</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="quarter">Quarter</label>
-                        <select class="form-control" id="quarter" required>
-                            <option value="">Select Quarter</option>
-                            <option value="1">Quarter 1</option>
-                            <option value="2">Quarter 2</option>
-                            <option value="3">Quarter 3</option>
-                            <option value="4">Quarter 4</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select class="form-control" id="status" required>
-                            <option value="pending">Pending</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group" id="topic-group">
-                        <label for="topic">Topic (MATATAG Curriculum)</label>
-                        <select class="form-control" id="topic" required>
-                            <option value="">Select Topic</option>
-                            <!-- Topics populated dynamically -->
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="notes">Notes (Optional)</label>
-                    <textarea class="form-control" id="notes" placeholder="Add notes or customizations" rows="4"></textarea>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" id="submit-btn">
-                        <i class="fas fa-plus"></i> Add Lesson
-                    </button>
-                    <button type="button" class="btn btn-secondary" id="cancel-edit-btn" style="display: none;">
-                        <i class="fas fa-times"></i> Cancel Edit
-                    </button>
-                    <button type="button" class="btn btn-secondary" id="print-btn">
-                        <i class="fas fa-print"></i> Print
-                    </button>
-                    <button type="button" class="btn btn-pdf" id="pdf-btn">
-                        <i class="fas fa-file-pdf"></i> Export PDF
-                    </button>
-                    <button type="button" class="btn btn-json" id="export-json-btn">
-                        <i class="fas fa-file-export"></i> Export JSON
-                    </button>
-                    <button type="button" class="btn btn-warning" id="import-json-btn">
-                        <i class="fas fa-file-import"></i> Import JSON
-                    </button>
-                    <button type="button" class="btn btn-accent" id="reset-btn">
-                        <i class="fas fa-trash"></i> Clear All
-                    </button>
-                </div>
-            </form>
-            
-            <div class="filter-controls">
-                <div>
-                    <label for="filter-subject">Subject:</label>
-                    <select id="filter-subject">
-                        <option value="all">All Subjects</option>
-                        <option value="english">English</option>
-                        <option value="math">Mathematics</option>
-                        <option value="science">Science</option>
-                        <option value="filipino">Filipino</option>
-                        <option value="ap">Araling Panlipunan</option>
-                        <option value="epp">EPP</option>
-                        <option value="gmrc">GMRC</option>
-                        <option value="mapeh">MAPEH</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label for="filter-quarter">Quarter:</label>
-                    <select id="filter-quarter">
-                        <option value="all">All Quarters</option>
-                        <option value="1">Quarter 1</option>
-                        <option value="2">Quarter 2</option>
-                        <option value="3">Quarter 3</option>
-                        <option value="4">Quarter 4</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label for="filter-status">Status:</label>
-                    <select id="filter-status">
-                        <option value="all">All Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="completed">Completed</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label for="search">Search:</label>
-                    <input type="text" id="search" placeholder="Search topics...">
-                </div>
-                
-                <button class="btn btn-primary" id="apply-filters">
-                    <i class="fas fa-filter"></i> Apply
-                </button>
-                
-                <button class="btn btn-secondary" id="clear-filters">
-                    <i class="fas fa-times"></i> Clear
-                </button>
-            </div>
-            
-            <div class="print-header">
-                <h2 class="print-title">Lesson Tracker 2030</h2>
-                <p class="print-subtitle">Grade 5 MATATAG Curriculum Progress</p>
-            </div>
-            
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Subject</th>
-                        <th>Quarter</th>
-                        <th>Topic</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="lesson-data">
-                    <!-- Data will be populated here -->
-                </tbody>
-            </table>
-            
-            <div class="storage-status">
-                <h3><i class="fas fa-info-circle"></i> Secure Local Storage</h3>
-                <p>Your data is encrypted and stored locally:</p>
-                <ul>
-                    <li>Offline functionality</li>
-                    <li>Full privacy - no servers involved</li>
-                    <li>Persistent across sessions</li>
-                    <li>Easy backup via export</li>
-                </ul>
-            </div>
-            
-            <div class="import-export">
-                <h3><i class="fas fa-file-import"></i> Data Management</h3>
-                <p>Export/Import JSON for backups or device transfer.</p>
-                <input type="file" id="import-file" accept=".json" style="display: none;">
-            </div>
-        </div>
-        
-        <div class="footer">
-            <p>Lesson Tracker 2030 &copy; 2025 | Grade 5 MATATAG Curriculum - Offline Ready</p>
-        </div>
-        
-        <div class="save-indicator" id="save-indicator">
-            <i class="fas fa-check-circle"></i> Data Secured
-        </div>
-        
-        <!-- Confirmation Modal -->
-        <div class="modal confirmation-modal" id="confirmation-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Confirm Action</h3>
-                    <button class="modal-close">&times;</button>
-                </div>
-                <p id="confirmation-message">Are you sure?</p>
-                <div>
-                    <button class="btn btn-accent" id="confirm-action">Confirm</button>
-                    <button class="btn btn-secondary" id="cancel-action">Cancel</button>
-                </div>
-            </div>
-        </div>
+    <h1>Grade 5 Matatag Curriculum Lesson Tracker</h1>
+    
+    <div class="instructions">
+        <p><strong>How to use:</strong> Select a subject from the dropdown below to view and edit its lesson plans. This tracker is designed for elementary teachers to easily monitor lessons across Weeks 1-9. Each week includes Days 1-5. Use the text areas to note lesson topics, objectives, or remarks. Check the box when the week's lessons for that subject are completed.</p>
     </div>
 
+    <div class="subject-selector">
+        <label for="subjectDropdown">Select Subject: </label>
+        <select id="subjectDropdown">
+            <option value="english">English</option>
+            <option value="filipino">Filipino</option>
+            <option value="science">Science</option>
+            <option value="mathematics">Mathematics</option>
+            <option value="ap">Araling Panlipunan</option>
+            <option value="mapeh">MAPEH</option>
+            <option value="gmrc">GMRC</option>
+        </select>
+    </div>
+
+    <div class="button-container">
+        <button class="save-btn" id="saveBtn">Save Progress</button>
+        <button class="clear-btn" id="clearBtn">Clear All Data</button>
+    </div>
+    <div class="save-message" id="saveMessage"></div>
+
+    <!-- English Section -->
+    <div id="english" class="subject-section active">
+        <h2>English</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Week</th>
+                    <th>Day 1</th>
+                    <th>Day 2</th>
+                    <th>Day 3</th>
+                    <th>Day 4</th>
+                    <th>Weekly Test</th>
+                    <th>Completed?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="week">Week 1</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 2</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 3</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 4</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 5</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 6</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 7</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 8</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 9</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Filipino Section -->
+    <div id="filipino" class="subject-section">
+        <h2>Filipino</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Week</th>
+                    <th>Day 1</th>
+                    <th>Day 2</th>
+                    <th>Day 3</th>
+                    <th>Day 4</th>
+                    <th>Weekly Test</th>
+                    <th>Completed?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="week">Week 1</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 2</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 3</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 4</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 5</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 6</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 7</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 8</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 9</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Science Section -->
+    <div id="science" class="subject-section">
+        <h2>Science</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Week</th>
+                    <th>Day 1</th>
+                    <th>Day 2</th>
+                    <th>Day 3</th>
+                    <th>Day 4</th>
+                    <th>Weekly Test</th>
+                    <th>Completed?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="week">Week 1</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 2</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 3</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 4</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 5</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 6</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 7</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 8</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 9</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Mathematics Section -->
+    <div id="mathematics" class="subject-section">
+        <h2>Mathematics</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Week</th>
+                    <th>Day 1</th>
+                    <th>Day 2</th>
+                    <th>Day 3</th>
+                    <th>Day 4</th>
+                    <th>Weekly Test</th>
+                    <th>Completed?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="week">Week 1</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 2</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 3</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 4</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 5</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 6</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 7</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 8</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 9</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Araling Panlipunan Section -->
+    <div id="ap" class="subject-section">
+        <h2>Araling Panlipunan</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Week</th>
+                    <th>Day 1</th>
+                    <th>Day 2</th>
+                    <th>Day 3</th>
+                    <th>Day 4</th>
+                    <th>Weekly Test</th>
+                    <th>Completed?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="week">Week 1</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 2</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 3</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 4</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 5</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 6</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 7</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 8</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 9</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- MAPEH Section -->
+    <div id="mapeh" class="subject-section">
+        <h2>MAPEH</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Week</th>
+                    <th>Day 1</th>
+                    <th>Day 2</th>
+                    <th>Day 3</th>
+                    <th>Day 4</th>
+                    <th>Weekly Test</th>
+                    <th>Completed?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="week">Week 1</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 2</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 3</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 4</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 5</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 6</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 7</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 8</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 9</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- GMRC Section -->
+    <div id="gmrc" class="subject-section">
+        <h2>GMRC</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Week</th>
+                    <th>Day 1</th>
+                    <th>Day 2</th>
+                    <th>Day 3</th>
+                    <th>Day 4</th>
+                    <th>Weekly Test</th>
+                    <th>Completed?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="week">Week 1</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 2</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 3</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 4</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 5</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 6</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 7</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 8</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+                <tr>
+                    <td class="week">Week 9</td>
+                    <td><textarea placeholder="Enter Day 1 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 2 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 3 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Day 4 lesson notes..."></textarea></td>
+                    <td><textarea placeholder="Enter Weekly Test notes..."></textarea></td>
+                    <td class="completed"><input type="checkbox"> Yes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer>
+        <p>Save this HTML file and open it in a browser to use. For printing or exporting, use browser tools. Note: Filipino is included once as per standard subjects; adjust if needed.</p>
+    </footer>
+
     <script>
-        // Initialize jsPDF
-        window.jsPDF = window.jspdf.jsPDF;
-        
         document.addEventListener('DOMContentLoaded', function() {
-            const lessonForm = document.getElementById('lesson-form');
-            const lessonData = document.getElementById('lesson-data');
-            const printBtn = document.getElementById('print-btn');
-            const pdfBtn = document.getElementById('pdf-btn');
-            const resetBtn = document.getElementById('reset-btn');
-            const saveIndicator = document.getElementById('save-indicator');
-            const filterSubject = document.getElementById('filter-subject');
-            const filterQuarter = document.getElementById('filter-quarter');
-            const filterStatus = document.getElementById('filter-status');
-            const searchInput = document.getElementById('search');
-            const applyFilters = document.getElementById('apply-filters');
-            const clearFilters = document.getElementById('clear-filters');
-            const submitBtn = document.getElementById('submit-btn');
-            const cancelEditBtn = document.getElementById('cancel-edit-btn');
-            const editIdField = document.getElementById('edit-id');
-            const exportJsonBtn = document.getElementById('export-json-btn');
-            const importJsonBtn = document.getElementById('import-json-btn');
-            const importFileInput = document.getElementById('import-file');
-            const statsContainer = document.getElementById('stats-container');
-            const confirmationModal = document.getElementById('confirmation-modal');
-            const confirmActionBtn = document.getElementById('confirm-action');
-            const cancelActionBtn = document.getElementById('cancel-action');
-            const confirmationMessage = document.getElementById('confirmation-message');
-            const modalCloseBtn = document.querySelector('.modal-close');
-            const subjectSelect = document.getElementById('subject');
-            const quarterSelect = document.getElementById('quarter');
-            const topicSelect = document.getElementById('topic');
+            const subjectDropdown = document.getElementById('subjectDropdown');
+            const subjectSections = document.querySelectorAll('.subject-section');
+            const saveBtn = document.getElementById('saveBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const saveMessage = document.getElementById('saveMessage');
             
-            let lessons = [];
-            let currentFilters = {
-                subject: 'all',
-                quarter: 'all',
-                status: 'all',
-                search: ''
-            };
-            let pendingAction = null;
-            
-            // MATATAG Grade 5 Curriculum Topics (based on extracted data)
-            const curriculumTopics = {
-                english: {
-                    1: [
-                        'EN5LR-I-1 Comprehend literary texts - Noting important elements (story grammar) - Sequencing at least 7 events - Identifying type of plot: sequential - Analyzing sound devices - Onomatopoeia - Alliteration - Assonance - Consonance - Analyzing figures of speech to get and clarify meaning - Simile - Metaphor - Personification - Inferring: character’s feelings and traits - Making predictions: character’s possible decision/action - Drawing conclusions - Identifying the main idea - Summarizing story events - Applying the important story elements to one’s schema: evaluating possibility of an event happening in real life',
-                        'EN5LR-I-2 Comprehend informational texts - Noting important information through outlining (topic, main idea, supporting details): deductive organization (inverted pyramid) - Identifying text types - Explanation - News report - Identifying author’s purpose - Entertain - Inform, explain, describe - Drawing conclusions - Making generalizations - Making a summary - Distinguishing fact from opinion (statements of facts, opinions, and fact-based statements of opinion)',
-                        'EN5SW-I-1 Use words with literal (denotative) and implied (connotative) meanings in sentences - Using context clues: analogy - Using structural analysis - Suffixes: verb-forming suffixes - Using general references (print and online): dictionary',
-                        'EN5SW-I-2 Use tone and mood appropriately for one’s purpose, context, and target audience: formal',
-                        'EN5SW-I-3 Compose appropriate sentences for clarity and coherence - Using subject-verb agreement - Kinds of nouns: collective, concrete, abstract - Subject pronouns: demonstrative, relative - Using kinds of verbs - Helping - Linking (and sense) - Transitive - Using tenses of verbs - Progressive: present, past, future - Using adjectives: series (determiner, quantity, quality, size, shape, color) - Using adverbs: manner - Composing compound-complex sentences',
-                        'EN5SW-I-4 Produce text with introduction, body, and conclusion in conveying ideas: giving relevant information on a given topic',
-                        'EN5SW-I-5 Express ideas appropriately (age-appropriate, gender-responsive, culture-sensitive) for one’s purpose, context, and target audience - Using text types - Narrative - Explanation - News report - Using friendly letters (e.g., excuse, invitation, gratitude, etc.)',
-                        'EN5SW-I-6 Use appropriate non-verbal cues for clarity of context, purpose, and meaning - Using facial expressions - Using gestures - Using eye contact - Using haptics - Using posture - Using proxemics and blocking',
-                        'EN5SW-I-7 Fill out forms accurately - Personal data forms - School forms',
-                        'EN5VR-I-1 Identify visual elements: using layout (margin, grid, header, slide bar)',
-                        'EN5VR-I-2 Derive meaning based on the visual elements - Interpreting tone and mood (colors, space, layout, directionality) - Identifying the purpose of the visual text - Analyzing how visual elements contribute to the meaning of a text - Interpreting images/ideas'
-                    ],
-                    2: [
-                        'The learners demonstrate their expanding vocabulary knowledge as used in formal and informal situations; growing knowledge of grammatical structures; literal, inferential, and critical comprehension of literary and informational texts; and developing skills in composing and creating text in order to produce culture-appropriate texts based on their purpose, context, and target audience.',
-                        'The learners apply literal, inferential, and critical comprehension of literary and informational texts and produce culture-appropriate texts: narrative and expository texts (explanation, news report) based on their purpose, context (national holidays), and target audience using simple, compound, and complex sentences, and age-appropriate and gender-sensitive language.'
-                    ],
-                    3: [
-                        'Placeholder for Quarter 3 - Add competencies here'
-                    ],
-                    4: [
-                        'Placeholder for Quarter 4 - Add competencies here'
-                    ]
-                },
-                math: {
-                    1: [
-                        'Describe a 12- and 24-hour clock system.',
-                        'Convert 12-hour time to 24-hour time, and vice-versa.',
-                        'Solve problems involving 12- and 24-hour time.',
-                        'Compare the time in different world time zones to the time in the Philippines using a world time zone map.',
-                        'Solve problems on comparing the time in different world time zones to the time in the Philippines.',
-                        'Identify the height of a parallelogram, triangle, and trapezoid, in different orientations.',
-                        'Find the area of a parallelogram, triangle, and trapezoid, in sq. cm or sq. m, using formulas.',
-                        'Estimate the areas of triangles and quadrilaterals (parallelogram, rhombus, trapezoid) using grids.',
-                        'Perform three or more different different operations by applying the GMDAS rules.',
-                        'Multiply fractions using models.',
-                        'Multiply a fraction by a fraction.',
-                        'Solve multi-step problems involving multiplication of fractions that may or may not also involve addition or subtraction of fractions.'
-                    ],
-                    2: [
-                        'Divide fractions using models.',
-                        'Divide a fraction by a fraction.',
-                        'Solve multi-step problems involving division of fractions that may or may not involve the other operations with fractions.',
-                        'Determine: The place value to thousandths of a digit in a given decimal number. The value of a digit. The digit of a number, given its place value.',
-                        'Read and write decimal numbers with decimal parts to thousandths.',
-                        'Convert terminating decimals to fractions, and vice-versa.',
-                        'Compare and order decimal numbers with decimal parts to thousandths.',
-                        'Round decimal numbers to the nearest thousandths.',
-                        'Add and subtract decimal numbers with decimal parts of up to 3 decimal places.',
-                        'Solve multi-step problems involving addition and/or subtraction of decimals, including problems involving money.',
-                        'Use divisibility rules to find common factors of numbers: Divisibility rules for 2, 5, and 10. Divisibility rules for 3, 6, and 9. Divisibility rules for 4, 8, 11, and 12.',
-                        'Distinguish prime numbers from composite numbers using the Sieve of Eratosthenes.'
-                    ],
-                    3: [
-                        'Collect bivariate data from interview, questionnaire, and other appropriate sources.',
-                        'Identify the appropriate graph (bar graph or line graph) to represent a given set of data.',
-                        'Construct double bar graphs and double line graphs.',
-                        'Interpret data presented in a double bar graph or a double line graph.',
-                        'Draw conclusions or make inferences based on data presented in a double bar graph or a double line graph.',
-                        'Solve problems using data presented in a double bar graph or a double line graph.',
-                        'Describe probability as a measure of the chance of an event occurring.',
-                        'Calculate the theoretical probability of a simple event by listing all possible outcomes.',
-                        'Estimate each of two decimal numbers to the nearest whole number to estimate their product.',
-                        'Multiply decimal numbers with decimal parts of up to 2 decimal places.',
-                        'Solve multi-step problems involving multiplication of decimals that may or may not also involve addition or subtraction of decimals, including problems involving money.'
-                    ],
-                    4: [
-                        'Placeholder for Quarter 4 - Add competencies here'
-                    ]
-                },
-                science: {
-                    1: [
-                        'describe matter as anything that has mass and takes up space;',
-                        'identify that matter has (exists in) three states called solids, liquids, and gases;',
-                        'describe the properties of solids, liquids, and gases in terms of shape and volume: solids: definite shape and volume, liquids: no definite shape; definite volume, gases: no definite shape or volume;',
-                        'identify objects at home and in the classroom as solid, liquid, or gas;',
-                        'use measuring cylinders or beakers to measure volume using units, such as milliliters (mL), and liters (L);',
-                        'describe how changes in temperature cause matter to change in state, such as solid to liquid to gas;',
-                        'describe the steps of a simple science investigation: What is the problem? What materials do you need? What do you need to do? What have you found out/learned?;',
-                        'identify and appropriately use units in simple science activities, such as milligrams (mg), grams (g), kilograms (kg), and degrees centigrade (°C);',
-                        'plan simple scientific investigations in answering questions, such as “Do gases (like air) or liquids (like water) have mass?”, using appropriate simple science equipment, such as a balance, and a thermometer, with appropriate units.'
-                    ],
-                    2: [
-                        'identify from pictures and labeled diagrams the parts of the digestive system as mouth, gullet, stomach, small intestine, and large intestine, and describe how they work;',
-                        'identify from pictures and diagrams the parts of the respiratory system as the nose, windpipe, and lungs, and describe how they work;',
-                        'identify from pictures and labeled diagrams the parts of the female reproductive system as ovaries, uterus, and vagina and those of the male reproductive system as the prostate, testis, and penis and describe how they work;',
-                        'use a table to show how living things can be classified into groups based on similar characteristics: plants including flowering and non-flowering; animals including mammals, reptiles, insects, birds, fish, amphibians, amphibians, and reptiles; microorganisms including fungi and bacteria;',
-                        'identify which groups of animals reproduce by giving birth to live young, such as mammals, and which reproduce by laying eggs, such as birds and reptiles;',
-                        'compare the life cycles of mammals from birth to adulthood, birds from egg to a mature organism, and plants from seed to a young plant, and then to a mature plant;',
-                        'describe the purpose of specialized structures in plants, such as rhizomes, tubers, thorns, bulbs, and aerial roots;',
-                        'explain how some plants have adapted to unfavorable conditions in the environment, such as lack of rain or floods;',
-                        'use information from secondary sources to describe examples of how some animals have changed to better suit their environment, such as mimicry or camouflage.'
-                    ],
-                    3: [
-                        'Placeholder for Quarter 3 - Add competencies here'
-                    ],
-                    4: [
-                        'Placeholder for Quarter 4 - Add competencies here'
-                    ]
-                },
-                filipino: {
-                    1: [
-                        'Nauunawaan ang tekstong naratibo (alamat, pabula, pabula, parabula, anekdota): Napagsusunod-sunod ang mga pangyayaring hindi bababa sa anim. Nasusuri ang katangian at kilos ng tauhan. Nakikilala ang realidad at pantasya. Naibibigay ang natuklasang kaalaman sa teksto. Nakapagbibigay ng angkop na pamagat ng teksto.',
-                        'Natutukoy ang tayutay (onomatopeya) sa pagbibigay-kahulugan ng pahayag sa binasa o napakinggang teksto.',
-                        'Naiuugnay ang kaisipan ng akda sa sariling karanasan.',
-                        'Nauunawaan ang tekstong impormatibo (pag-iisa at paglalarawan): Natutukoy ang mahahalagang impormasyon ng teksto. Nakikilala ang paksa, pangunahin, at mga pansuportang detalye. Nakapagbibigay ng sariling reaksiyon.',
-                        'Nasusuri ang layon ng teksto: magsalaysay (alamat, pabula, pabula, parabula, anekdota) at maglahad (pag-iisa-isa at paglalarawan).',
-                        'Nagagamit ang mga salitang may denotasyon at konotasyong kahulugan sa pagbuo ng pangungusap: Panandang konteksto: kasingkahulugan, kasalungat, pagbibigay ng halimbawa. Tayutay: onomatopeya.',
-                        'Nagagamit ang angkop na diksiyon (kaangkupan ng salita/retorika at estilo) sa pagpapahayag ayon sa: Layon (magsalaysay at maglahad). Kahulugan. Tagapakinig/tagapanood/mambabasa. Konteksto (salusalo at kaarawan). Tono at damdamin.',
-                        'Nakabubuo ng pahayag gamit ang hugnayang pangungusap.',
-                        'Nagagamit ang mga bahagi ng panalita sa pagpapahayag: Gamit ng mga panlapi: unlapi, gitlapi, hulapi, kabilaan. Pangatnig: nag-uugnay ng magkatimbang, nag-uugnay ng di-magkatimbang. Pangngalan: uri (pantangi, pambalana: tahas/kongkreto, basal/di-kongkreto, lansakan), kayarian (payak at maylapi). Panghalip panao. Pang-uring panlarawan: kayarian (payak at maylapi). Pang-abay: pamanahon, panlunan.',
-                        'Nagagamit ang pangkalahatang kayarian ng teksto sa pagbuo ng diskurso: nagsasalaysay (alamat, pabula, parabula, at anekdota), naglalahad (pag-iisa-isa at paglalarawan).',
-                        'Nakabubuo ng tekstong may mga panandang nag-uugnay ng mga ideya ayon sa layon, kahulugan, tagapakinig/mambabasa, at konteksto: Tekstong naratibo (alamat, pabula, parabula, at anekdota). Tekstong impormatibo (pag-iisa-isa, paglalarawan).',
-                        'Nagagamit ang angkop na wika sa pagpapahayag na isinasaalang-alang ang edad, kasarian, paksa, at kultura sa iba’t ibang sitwasyon: pakikipag-usap sa kasapi ng pamilya (pagpapaalam, pag-utos, paghingi ng paumanhin, pagsali sa usapan ng may edad).'
-                    ],
-                    2: [
-                        'Placeholder for Quarter 2 - Add competencies here'
-                    ],
-                    3: [
-                        'Placeholder for Quarter 3 - Add competencies here'
-                    ],
-                    4: [
-                        'Placeholder for Quarter 4 - Add competencies here'
-                    ]
-                },
-                ap: {
-                    1: [
-                        'Naipaliliwanag ang pag-aaral ng kasaysayan at mga batayan nito.',
-                        'Natatalakay ang mga pamamaraan at pananaw ng kasaysayan.',
-                        'Natutukoy ang pinagmulan ng Pilipinas batay sa agham, kaalamang bayan, at relihiyon.',
-                        'Nasusuri ang pinagmulan ng sinaunang tao sa Pilipinas batay sa agham at kaalamang bayan.',
-                        'Nasusuri ang kaugnayan ng lokasyon sa paghubog ng kasaysayan.',
-                        'Nasusuri ang mga sinaunang bayang Pilipino batay sa organisasyong panlipunan, pang-ekonomiya, at pampolitika.',
-                        'Napahahalagahan ang ginampanan ng kababaihan sa pagbuo ng kalinangan ng sinaunang Pilipino.'
-                    ],
-                    2: [
-                        'Naipaliliwanag ang konsepto ng kalinangan at uri nito.',
-                        'Nasusuri ang mga paniniwala, relihiyon, at tradisyon ng sinaunang bayang Pilipino.',
-                        'Natatalakay ang iba’t ibang uri ng sinaunang sining, pagpapalamuti at arkitektura ng mga Pilipino.',
-                        'Natatalakay ang pagdating at paglaganap ng Islam.',
-                        'Nasusuri ang mga katuruan ng Islam at pamahalaang sultanato.',
-                        'Napahahalagahan ang ugnayan ng sinaunang bayang Pilipino sa ilang piling bansa sa Asya.'
-                    ],
-                    3: [
-                        'Placeholder for Quarter 3 - Add competencies here'
-                    ],
-                    4: [
-                        'Placeholder for Quarter 4 - Add competencies here'
-                    ]
-                },
-                epp: {
-                    1: [
-                        'natatalakay ang mga panuntunan ng netiquette sa paggamit ng Internet',
-                        'nakikilala ang mga uri ng web browser at mga bahagi nito',
-                        'nagagamit ang search engine sa ligtas at responsableng pamamaraan',
-                        'nakapagpapadala ng mensahe gamit ang E-Mail sa ligtas at responsableng pamamaraan',
-                        'nakagagawa ng word document na may images, shapes, smartarts, tables at page background',
-                        'nakagagawa ng slide presentation na may animation, transition, audio, at video',
-                        'nakagagawa ng desktop publishing document gamit ang page design, layout, at building block',
-                        'nakagagawa ng spreadsheet na may basic functions',
-                        'nakikila ang user interface ng Block Coding',
-                        'nagagamit ang events, motion, sound, looks, at backdrops block codes'
-                    ],
-                    2: [
-                        'natatalakay ang kahulugan ng animal production at mga sangay nito',
-                        'natatalakay ang kahalagahan at kabutihang dulot sa pag-aalaga ng poultry animals sa natural na pamamaraan',
-                        'naipaliliwanag ang mga piling batas, lokal na ordinansa, at mga ahensya ng gobyerno at non-government organization (NGOs), at serbisyong naibibigay sa pag-aalaga ng poultry animals',
-                        'nakikilala ang mga tao sa pamayanan/buong bansa na nagtagumpay sa pag-aalaga ng poultry animals at ang mga katangiang taglay nila',
-                        'natatalakay ang mga salik na dapat isaalang-alang sa sa pag-aalaga ng poultry animals sa natural na paraan',
-                        'natatalakay ang mga karaniwang uri at lahi ng poultry animals na makikita sa pamayanan na maaaring alagaan',
-                        'natatalakay ang mga karaniwang sakit, sanhi, palatandaan, pamaraan sa pag iwas at panlunas sa mga sakit ng poultry animals',
-                        'naisasagawa ang pag-aalaga at pangangasiwa ng poultry animals sa natural na pamamaraan',
-                        'natatalakay ang pag-aani ng alagang poultry animals at mga produkto nito',
-                        'nakapagbebenta ng mga inaning poultry animals at produkto nito',
-                        'naisasagawa ang pagtutuos ng kita mula sa napagbentahan/kabuuang benta, kabuuang gastos, at tubo o kita gamit ang manual na pagtutuos o productivity tools'
-                    ],
-                    3: [
-                        'Discuss the different features of a residential floor plan with plumbing layout (walls, doors, fixtures, signs and symbols, plumbing system diagram (isometric), dimensioning - elements, systems, methods).',
-                        'Draft the floor plan with the plumbing layout.',
-                        'Draft the fixtures, signs, and symbols on the floor plan with plumbing layout & its diagram.',
-                        'Label the floor plan with plumbing layout and its diagram with dimensions.'
-                    ],
-                    4: [
-                        'Discuss the handling and storing of consumables (joints, fittings, fixtures, adhesive, de-clogger, sealants).',
-                        'Demonstrate the use of hand tools and equipment following the safety precautions (cutting, reaming, threading, de-clogger).',
-                        'Demonstrate the maintenance of hand tools following the safety precautions (storage, care).',
-                        'Apply procedures in pipe installation with safety precautions (specification, measurement, and design, pipe joining and fitting method).',
-                        'Apply procedures in testing pipe installation with safety precautions.',
-                        'Apply procedures in pipeline testing and troubleshooting following the safety precautions (types of troubles, types of tests - leak test, system test, pressure test).',
-                        'Apply procedures in pipeline repair following the safety precautions.',
-                        'Compute repair service cost (material costing, manpower/labor costing).'
-                    ]
-                },
-                gmrc: {
-                    1: [
-                        'Naisasabuhay ang pagpapahalaga sa sarili sa pamamagitan ng pagbibigay-halaga sa mga sariling kakayahan na wala sa ibang nilalang (hal. kakayahang magpasiya, umunawa ng damdamin ng iba).',
-                        'Nakapagsasanay sa pagiging matapat sa pamamagitan ng angkop na paglalahad ng tunay na saloobin sa mga kasapi ng pamilya.',
-                        'Naisasabuhay ang pagiging magalang sa pamamagitan ng pakikilahok sa mga gawain na kumikilala sa karapatan ng kapuwa-bata.',
-                        'Naipakikita ang pananalig sa Diyos sa pamamagitan ng mga paraan ng pagsamba at pagsunod sa mga tagubilin ng kinabibilangang pananampalataya.',
-                        'Naipakikita ang pagiging mapanagutan sa pamamagitan ng paglahok sa mga gawaing pangangalaga at pagpaparami ng mga puno at halaman.',
-                        'Nakapagsasanay ng pagmamahal sa bayan sa pamamagitan ng mga gawain na nagtatampok sa mga Pilipinong nagsasabuhay ng mabuting kaugalian.'
-                    ],
-                    2: [
-                        'Naisasabuhay ang tiwala sa sarili sa pamamagitan ng paglahok sa mga programang pampaaralan na nagpapaunlad ng mga kakayahan, talento at hilig na ng may paggabay ng pamilya.',
-                        'Nakapagsasanay ng pagiging matiyaga sa pamamagitan ng palagiang paggawa ng mga gawain g bukas sa mungkahi ng miyembro ng pamilya.',
-                        'Nakapagsasanay sa pagiging mapagpasensiya sa pamamagitan ng angkop na pananalita at pagtugon sa kapuwa nang may pagsasaalang-alang sa damdamin ng kapuwa.',
-                        'Naipakikita ang pagiging masunurin sa pamamagitan ng mapagkalingang pakikitungo sa mga kasapi ng pamilya.',
-                        'Napagsisikap sa pagiging mabuting katiwala sa pamamagitan ng paglahok sa mga gawaing ng pamilya na nagpapanatili ng kalinisan ng tubig.',
-                        'Nakapgsasanay sa pagmamahal sa bayan sa pamamagitan ng pagtugon sa pagpapatatag ng mga gawi sa pamilya ayon sa kaugaliang Pilipino.'
-                    ],
-                    3: [
-                        'Nakapgsasanay sa pagiging matipid sa pamamagitan ng pagtatabi ng mga bahagi ng baong pera/allowance o gamit na ayon sa kakayahan na maaaring makatulong sa sarili o kapuwa sa panahon ng pangangailangan.',
-                        'Naisasabuhay ang pagiging mapagmalasakit sa pamamagitan ng pakikiisa sa pamilya sa pagtugon sa pangangailangan ng kapuwa.',
-                        'Naisasabuhay ang pagiging magalang sa kapuwa sa pamamagitan ng pantay-pantay na pakikipag-ugnayan sa kabila ng pagkakaiba-iba (hal. walang pagtatangi sa kapuwa anuman ang kaniyang estado sa buhay).',
-                        'Nakapgsasanay sa pagiging mapagpakumbaba sa pamamagitan ng regular na pananalangin, kusang pag-amin sa mga nagawang kam.'
-                    ],
-                    4: [
-                        'Placeholder for Quarter 4 - Add competencies here'
-                    ]
-                },
-                mapeh: {
-                    1: [
-                        'discuss the basic concepts and principles of sound, theater, dance, and visual elements based on the representations in the creative works of their province;',
-                        'describe concepts and ideas about their cultural identity based on the representations in the creative works of their province;',
-                        'explain relevant and/or unique local processes and practices in producing/performing creative works that reveal their cultural identity;',
-                        'use relevant and appropriate local processes and practices in producing/performing creative works that reveal their cultural identity.'
-                    ],
-                    2: [
-                        'discuss the basic concepts and principles of sound, theater, dance, and visual elements based on the representations of local creative works;',
-                        'relate their faiths and beliefs based on the representations of local creative works with basic concepts and principles of sound, theater, dance, and visual elements;',
-                        'compare the musical, theatrical, dance, and visual arts representations of local concepts (i.e., use of range of dynamics, use of colors and symbols) in relevant creative works based on the faiths and beliefs of the province;',
-                        'experiment with relevant, appropriate, and available local processes and practices in producing/performing creative works that reveal their faiths and beliefs;',
-                        'produce simple improvisations (timbre, dynamics, theatrical, dance, and visual) with faiths and beliefs as the theme.'
-                    ],
-                    3: [
-                        'discuss the use of the properties of sound, theatrical, dance, and visual elements as expressed in relevant creative works;',
-                        'relate stories/narratives as expressed in relevant creative works to properties of sound, theatrical, dance, and visual elements;',
-                        'determine cultural identity based on the concepts, processes, and practices in the Music, Theater, Dance, and Art of their respective provinces;',
-                        'produce a creative work about their personal story/identity in the community using appropriate local concepts, processes, and practices in Music, Theater, Dance, and Arts.'
-                    ],
-                    4: [
-                        'examine the properties of sound, theatrical, dance, visual elements, and design principles observed in selected sample creative works from their province;',
-                        'distinguish the unique musical, visual, dance, and theatrical concepts, processes, and practices in the creative works found in the cultural celebrations of their province/region;',
-                        'select appropriate practices, choice of themes, mediums, and concepts of celebrations found in their province/region for the production of their creative works;',
-                        'produce creative artworks based on the celebrations of their culture, province, region using available local concepts, processes, and practices, and beliefs as the theme.'
-                    ]
-                }
-            };
-            
-            // Function to populate topics based on selections
-            function populateTopics() {
-                const subject = subjectSelect.value;
-                const quarter = quarterSelect.value;
-                topicSelect.innerHTML = '<option value="">Select Topic</option>';
+            // Function to show selected subject and hide others
+            function showSelectedSubject() {
+                const selectedSubject = subjectDropdown.value;
                 
-                if (subject && quarter && curriculumTopics[subject] && curriculumTopics[subject][quarter]) {
-                    curriculumTopics[subject][quarter].forEach(topic => {
-                        topicSelect.innerHTML += `<option value="${topic}">${topic}</option>`;
-                    });
-                } else {
-                    topicSelect.outerHTML = '<input type="text" class="form-control" id="topic" placeholder="Enter custom topic" required>';
+                // Hide all subject sections
+                subjectSections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the selected subject section
+                const selectedSection = document.getElementById(selectedSubject);
+                if (selectedSection) {
+                    selectedSection.classList.add('active');
                 }
             }
             
-            // Event listeners for dynamic topic population
-            subjectSelect.addEventListener('change', populateTopics);
-            quarterSelect.addEventListener('change', populateTopics);
+            // Function to save all data to localStorage
+            function saveData() {
+                try {
+                    const data = {};
+                    
+                    // Get all textareas
+                    const textareas = document.querySelectorAll('textarea');
+                    textareas.forEach((textarea, index) => {
+                        data[`textarea_${index}`] = textarea.value;
+                    });
+                    
+                    // Get all checkboxes
+                    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                    checkboxes.forEach((checkbox, index) => {
+                        data[`checkbox_${index}`] = checkbox.checked;
+                    });
+                    
+                    // Save to localStorage
+                    localStorage.setItem('lessonTrackerData', JSON.stringify(data));
+                    
+                    // Show success message
+                    showMessage('Progress saved successfully!', false);
+                } catch (error) {
+                    console.error('Error saving data:', error);
+                    showMessage('Error saving progress. Please try again.', true);
+                }
+            }
             
-            // Load data from localStorage
+            // Function to load data from localStorage
             function loadData() {
                 try {
-                    const savedData = localStorage.getItem('lessonData');
-                    if (savedData) {
-                        lessons = JSON.parse(savedData);
-                        renderTable();
-                        updateStats();
-                    } else {
-                        showEmptyState();
-                        updateStats();
+                    const data = JSON.parse(localStorage.getItem('lessonTrackerData'));
+                    
+                    if (data) {
+                        // Restore textareas
+                        const textareas = document.querySelectorAll('textarea');
+                        textareas.forEach((textarea, index) => {
+                            if (data[`textarea_${index}`]) {
+                                textarea.value = data[`textarea_${index}`];
+                            }
+                        });
+                        
+                        // Restore checkboxes
+                        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                        checkboxes.forEach((checkbox, index) => {
+                            if (data.hasOwnProperty(`checkbox_${index}`)) {
+                                checkbox.checked = data[`checkbox_${index}`];
+                            }
+                        });
                     }
                 } catch (error) {
                     console.error('Error loading data:', error);
-                    showError('Failed to load data from storage');
-                    lessons = [];
-                    showEmptyState();
                 }
             }
             
-            // Show empty state
-            function showEmptyState() {
-                lessonData.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="empty-state">
-                            <i class="fas fa-inbox"></i>
-                            <h3>No Lessons Yet</h3>
-                            <p>Add using the form above.</p>
-                        </td>
-                    </tr>
-                `;
-            }
-            
-            // Update statistics
-            function updateStats() {
-                const totalLessons = lessons.length;
-                const completedLessons = lessons.filter(lesson => lesson.status === 'completed').length;
-                const pendingLessons = totalLessons - completedLessons;
-                const completionRate = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
-                
-                statsContainer.innerHTML = `
-                    <div class="stat-card">
-                        <div class="stat-label">Total Lessons</div>
-                        <div class="stat-value">${totalLessons}</div>
-                    </div>
-                    <div class="stat-card secondary">
-                        <div class="stat-label">Completed</div>
-                        <div class="stat-value">${completedLessons}</div>
-                    </div>
-                    <div class="stat-card warning">
-                        <div class="stat-label">Pending</div>
-                        <div class="stat-value">${pendingLessons}</div>
-                    </div>
-                    <div class="stat-card accent">
-                        <div class="stat-label">Completion Rate</div>
-                        <div class="stat-value">${completionRate}%</div>
-                    </div>
-                `;
-            }
-            
-            // Save data to localStorage
-            function saveData() {
-                try {
-                    localStorage.setItem('lessonData', JSON.stringify(lessons));
-                    
-                    // Show save indicator
-                    saveIndicator.classList.add('show');
-                    setTimeout(() => {
-                        saveIndicator.classList.remove('show');
-                    }, 2000);
-                    
-                    updateStats();
-                } catch (error) {
-                    console.error('Error saving data:', error);
-                    showError('Failed to save. Storage may be full.');
-                }
-            }
-            
-            // Show error message
-            function showError(message) {
-                const errorIndicator = document.createElement('div');
-                errorIndicator.className = 'save-indicator';
-                errorIndicator.style.background = 'linear-gradient(45deg, var(--error-red), #cc0000)';
-                errorIndicator.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-                document.body.appendChild(errorIndicator);
-                
-                setTimeout(() => {
-                    errorIndicator.classList.add('show');
-                    setTimeout(() => {
-                        errorIndicator.classList.remove('show');
-                        setTimeout(() => {
-                            document.body.removeChild(errorIndicator);
-                        }, 300);
-                    }, 3000);
-                }, 100);
-            }
-            
-            // Render table
-            function renderTable() {
-                lessonData.innerHTML = '';
-                
-                if (lessons.length === 0) {
-                    showEmptyState();
-                    return;
-                }
-                
-                let filteredLessons = lessons.filter(lesson => {
-                    if (currentFilters.subject !== 'all' && lesson.subject !== currentFilters.subject) return false;
-                    if (currentFilters.quarter !== 'all' && lesson.quarter !== currentFilters.quarter) return false;
-                    if (currentFilters.status !== 'all' && lesson.status !== currentFilters.status) return false;
-                    if (currentFilters.search && !lesson.topic.toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
-                    return true;
-                });
-                
-                if (filteredLessons.length === 0) {
-                    lessonData.innerHTML = `
-                        <tr>
-                            <td colspan="5" style="text-align: center; padding: 20px; color: var(--text-secondary);">
-                                No matching lessons. Adjust filters.
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                const subjectMap = {
-                    'english': 'English',
-                    'math': 'Mathematics',
-                    'science': 'Science',
-                    'filipino': 'Filipino',
-                    'ap': 'Araling Panlipunan',
-                    'epp': 'EPP',
-                    'gmrc': 'GMRC',
-                    'mapeh': 'MAPEH'
-                };
-                
-                filteredLessons.forEach(lesson => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${subjectMap[lesson.subject] || lesson.subject}</td>
-                        <td>Quarter ${lesson.quarter}</td>
-                        <td>${lesson.topic}</td>
-                        <td>
-                            <span class="status-badge ${lesson.status === 'completed' ? 'status-completed' : 'status-pending'}">
-                                ${lesson.status.charAt(0).toUpperCase() + lesson.status.slice(1)}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="action-btn edit-btn" data-id="${lesson.id}">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button class="action-btn delete-btn" data-id="${lesson.id}">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </div>
-                        </td>
-                    `;
-                    lessonData.appendChild(row);
-                });
-                
-                document.querySelectorAll('.edit-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const id = this.getAttribute('data-id');
-                        editLesson(id);
-                    });
-                });
-                
-                document.querySelectorAll('.delete-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const id = this.getAttribute('data-id');
-                        showConfirmation('Delete this lesson?', () => deleteLesson(id));
-                    });
-                });
-            }
-            
-            // Edit lesson
-            function editLesson(id) {
-                const lesson = lessons.find(l => l.id === id);
-                if (!lesson) return;
-                
-                subjectSelect.value = lesson.subject;
-                quarterSelect.value = lesson.quarter;
-                populateTopics(); // Repopulate topics
-                if (document.getElementById('topic').tagName === 'SELECT') {
-                    topicSelect.value = lesson.topic;
-                } else {
-                    document.getElementById('topic').value = lesson.topic;
-                }
-                document.getElementById('status').value = lesson.status;
-                document.getElementById('notes').value = lesson.notes || '';
-                
-                editIdField.value = id;
-                submitBtn.innerHTML = '<i class="fas fa-save"></i> Update';
-                cancelEditBtn.style.display = 'inline-flex';
-                
-                lessonForm.scrollIntoView({ behavior: 'smooth' });
-            }
-            
-            // Cancel edit
-            function cancelEdit() {
-                editIdField.value = '';
-                lessonForm.reset();
-                submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Lesson';
-                cancelEditBtn.style.display = 'none';
-                // Reset topic to select
-                document.getElementById('topic-group').innerHTML = `
-                    <label for="topic">Topic (MATATAG Curriculum)</label>
-                    <select class="form-control" id="topic" required>
-                        <option value="">Select Topic</option>
-                    </select>
-                `;
-            }
-            
-            // Delete lesson
-            function deleteLesson(id) {
-                lessons = lessons.filter(lesson => lesson.id !== id);
-                saveData();
-                renderTable();
-            }
-            
-            // Show confirmation
-            function showConfirmation(message, callback) {
-                confirmationMessage.textContent = message;
-                pendingAction = callback;
-                confirmationModal.style.display = 'flex';
-            }
-            
-            // Form submission
-            lessonForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const subject = subjectSelect.value;
-                const quarter = quarterSelect.value;
-                const topicElement = document.getElementById('topic');
-                const topic = topicElement.value;
-                const status = document.getElementById('status').value;
-                const notes = document.getElementById('notes').value;
-                const editId = editIdField.value;
-                
-                if (!editId) {
-                    const isDuplicate = lessons.some(l => l.subject === subject && l.quarter === quarter && l.topic === topic);
-                    if (isDuplicate) {
-                        showError('Duplicate lesson!');
-                        return;
-                    }
-                }
-                
-                const lessonData = {
-                    subject,
-                    quarter,
-                    topic,
-                    status,
-                    notes,
-                    createdAt: new Date().toISOString()
-                };
-                
-                if (editId) {
-                    const index = lessons.findIndex(l => l.id === editId);
-                    if (index !== -1) {
-                        lessons[index] = { ...lessons[index], ...lessonData };
-                    }
-                } else {
-                    lessonData.id = Date.now().toString();
-                    lessons.push(lessonData);
-                }
-                
-                saveData();
-                renderTable();
-                cancelEdit();
-            });
-            
-            // Print
-            printBtn.addEventListener('click', () => window.print());
-            
-            // PDF Export
-            pdfBtn.addEventListener('click', function() {
-                const doc = new jsPDF();
-                doc.setFontSize(20);
-                doc.text('Lesson Tracker 2030', 14, 15);
-                doc.setFontSize(12);
-                doc.setTextColor(100);
-                
-                let filtersText = 'All Lessons';
-                if (currentFilters.subject !== 'all' || currentFilters.quarter !== 'all' || currentFilters.status !== 'all' || currentFilters.search) {
-                    filtersText = 'Filtered Lessons' + (currentFilters.subject !== 'all' ? ` | Subject: ${filterSubject.options[filterSubject.selectedIndex].text}` : '') +
-                                  (currentFilters.quarter !== 'all' ? ` | Quarter: ${currentFilters.quarter}` : '') +
-                                  (currentFilters.status !== 'all' ? ` | Status: ${currentFilters.status}` : '') +
-                                  (currentFilters.search ? ` | Search: ${currentFilters.search}` : '');
-                }
-                doc.text(filtersText, 14, 22);
-                
-                let filteredLessons = lessons.filter(lesson => {
-                    if (currentFilters.subject !== 'all' && lesson.subject !== currentFilters.subject) return false;
-                    if (currentFilters.quarter !== 'all' && lesson.quarter !== currentFilters.quarter) return false;
-                    if (currentFilters.status !== 'all' && lesson.status !== currentFilters.status) return false;
-                    if (currentFilters.search && !lesson.topic.toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
-                    return true;
-                });
-                
-                const tableColumn = ["Subject", "Quarter", "Topic", "Status"];
-                const tableRows = [];
-                const subjectMap = {
-                    'english': 'English',
-                    'math': 'Mathematics',
-                    'science': 'Science',
-                    'filipino': 'Filipino',
-                    'ap': 'Araling Panlipunan',
-                    'epp': 'EPP',
-                    'gmrc': 'GMRC',
-                    'mapeh': 'MAPEH'
-                };
-                
-                filteredLessons.forEach(lesson => {
-                    tableRows.push([
-                        subjectMap[lesson.subject],
-                        `Quarter ${lesson.quarter}`,
-                        lesson.topic,
-                        lesson.status.charAt(0).toUpperCase() + lesson.status.slice(1)
-                    ]);
-                });
-                
-                doc.autoTable({
-                    head: [tableColumn],
-                    body: tableRows,
-                    startY: 30,
-                    theme: 'grid',
-                    styles: { fontSize: 10, cellPadding: 3 },
-                    headStyles: { fillColor: [0, 255, 255], textColor: 0, fontStyle: 'bold' },
-                    alternateRowStyles: { fillColor: [240, 240, 240] }
-                });
-                
-                const date = new Date();
-                doc.save(`lessons-${date.toISOString().slice(0,10)}.pdf`);
-            });
-            
-            // Reset
-            resetBtn.addEventListener('click', () => showConfirmation('Clear all data?', () => {
-                lessons = [];
-                saveData();
-                renderTable();
-                cancelEdit();
-            }));
-            
-            // Filters
-            applyFilters.addEventListener('click', () => {
-                currentFilters.subject = filterSubject.value;
-                currentFilters.quarter = filterQuarter.value;
-                currentFilters.status = filterStatus.value;
-                currentFilters.search = searchInput.value;
-                renderTable();
-            });
-            
-            clearFilters.addEventListener('click', () => {
-                filterSubject.value = 'all';
-                filterQuarter.value = 'all';
-                filterStatus.value = 'all';
-                searchInput.value = '';
-                currentFilters = { subject: 'all', quarter: 'all', status: 'all', search: '' };
-                renderTable();
-            });
-            
-            // Cancel edit
-            cancelEditBtn.addEventListener('click', cancelEdit);
-            
-            // Export JSON
-            exportJsonBtn.addEventListener('click', () => {
-                const dataStr = JSON.stringify(lessons, null, 2);
-                const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-                const link = document.createElement('a');
-                link.href = dataUri;
-                link.download = `lessons-${new Date().toISOString().slice(0,10)}.json`;
-                link.click();
-            });
-            
-            // Import JSON
-            importJsonBtn.addEventListener('click', () => importFileInput.click());
-            importFileInput.addEventListener('change', (event) => {
-                const file = event.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (e) => {
+            // Function to clear all data
+            function clearAllData() {
+                if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
                     try {
-                        const imported = JSON.parse(e.target.result);
-                        if (!Array.isArray(imported)) throw new Error('Invalid data');
-                        showConfirmation(`Import ${imported.length} lessons? Replaces current.`, () => {
-                            lessons = imported.map(l => ({ ...l, id: l.id || Date.now().toString() }));
-                            saveData();
-                            renderTable();
-                            importFileInput.value = '';
+                        // Clear textareas
+                        document.querySelectorAll('textarea').forEach(textarea => {
+                            textarea.value = '';
                         });
-                    } catch (err) {
-                        showError('Import failed. Invalid file.');
-                        importFileInput.value = '';
+                        
+                        // Clear checkboxes
+                        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+                        
+                        // Clear localStorage
+                        localStorage.removeItem('lessonTrackerData');
+                        
+                        showMessage('All data has been cleared.', false);
+                    } catch (error) {
+                        console.error('Error clearing data:', error);
+                        showMessage('Error clearing data. Please try again.', true);
                     }
-                };
-                reader.readAsText(file);
-            });
-            
-            // Modal handlers
-            confirmActionBtn.addEventListener('click', () => {
-                if (pendingAction) pendingAction();
-                confirmationModal.style.display = 'none';
-                pendingAction = null;
-            });
-            cancelActionBtn.addEventListener('click', () => {
-                confirmationModal.style.display = 'none';
-                pendingAction = null;
-            });
-            modalCloseBtn.addEventListener('click', () => {
-                confirmationModal.style.display = 'none';
-                pendingAction = null;
-            });
-            window.addEventListener('click', (event) => {
-                if (event.target === confirmationModal) {
-                    confirmationModal.style.display = 'none';
-                    pendingAction = null;
                 }
-            });
+            }
             
-            // Init
+            // Function to show messages
+            function showMessage(message, isError) {
+                saveMessage.textContent = message;
+                saveMessage.classList.add('show');
+                if (isError) {
+                    saveMessage.classList.add('error');
+                } else {
+                    saveMessage.classList.remove('error');
+                }
+                
+                // Hide message after 3 seconds
+                setTimeout(() => {
+                    saveMessage.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Add event listeners
+            subjectDropdown.addEventListener('change', showSelectedSubject);
+            saveBtn.addEventListener('click', saveData);
+            clearBtn.addEventListener('click', clearAllData);
+            
+            // Load data on page load
             loadData();
+            
+            // Initialize with the first subject selected
+            showSelectedSubject();
         });
     </script>
 </body>
